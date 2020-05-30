@@ -1,0 +1,62 @@
+# 本地服务访问
+server:
+  # 服务端口
+  port: 8770
+  # 服务IP
+  address: 0.0.0.0
+
+# eureka注册中心
+eureka:
+  client:
+    serviceUrl:
+      # 默认注册中心地址，如果为集群，请指向另一个注册中心，使用域名作为访问路径，如有多个节点，使用逗号','分隔
+      defaultZone: http://127.0.0.1:8761/eureka/,http://192.168.110.35:8761/eureka/,http://192.168.110.36:8761/eureka/
+  instance:
+    # 注册到eureka的主机名称
+    hostname: 192.168.11.45
+    # 注册到eureka的主机IP
+    ipAddress: 192.168.11.45
+    # 优先使用IP名注册
+    prefer-ip-address: true
+
+spring:
+  application:
+    # 应用服务名
+    name: dynamic-manage
+  profiles:
+    active: db
+  # redis连接配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          # 启用本地化网关
+          enabled: true
+          # 将服务名转换为小写
+          lower-case-service-id: true
+
+# 启用服务健康检测，注册中心将通过http://host:port/actuator/health 检测服务的存活，默认10s一次
+# 查看网关的路由：http://localhost:8888/actuator/gateway/routes
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        # 开放所有端点health，info，metrics，通过actuator/+端点名就可以获取相应的信息。默认打开health和info
+        - "*"
+  health:
+    # 开启后打印详细信息
+    show-details: always
+    refresh:
+      enabled: true
+
+# 配置日志
+logging:
+  level:
+    # log 级别
+    org.springframework.cloud.gateway: debug
+

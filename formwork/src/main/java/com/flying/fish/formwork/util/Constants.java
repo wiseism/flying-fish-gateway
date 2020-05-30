@@ -1,0 +1,44 @@
+package com.flying.fish.formwork.util;
+
+/**
+ * @Description 常量类
+ * @Author jianglong
+ * @Date 2019/07/01
+ * @Version V1.0
+ */
+public class Constants {
+
+    /**
+     * 0正常，1无效
+     */
+    public static final String YES = "0";
+    public static final String NO = "1";
+
+    /**
+     * 0表示未获取响应结果（异常），1表示有响应结果（正常），-1表示未登录或无权限
+     */
+    public static final String SUCCESS = "1";
+    public static final String FAILED = "0";
+    public static final String NOT_LOGIN = "-1";
+
+    public static final String ENCODING = "UTF-8";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String APPLICATION_JSON = "application/json;charset=UTF-8";
+
+    public static final String SEPARATOR_SIGN = ",";
+    public static final String NULL = "null";
+    public static final String HTTP = "http";
+
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+
+
+    /**
+     * 下一步,默认从1开始
+     */
+    public static final int CURRENT_PAGE=1;
+    /**
+     * 分页记录行大小
+     */
+    public static final int PAGE_SIZE=10;
+
+}

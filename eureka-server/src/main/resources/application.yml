@@ -1,0 +1,29 @@
+server:
+  port: 8761
+  address: 0.0.0.0
+
+  # Eureka是Spring Cloud Netflix项目下的服务治理模块
+  # 服务注册中心 ：eureka-server
+  # 作用：服务注册中心提供服务注册功能
+  # 服务提供方：eureka-client
+  # 作用：注册服务到服务注册中心
+
+
+
+eureka:
+  instance:
+    hostname: localhost
+    # 通过eureka.client.registerWithEureka：false和fetchRegistry：false来表明自己是一个eureka server.
+  client:
+    # 是否将自己注册到Eureka-Server中，默认的为true
+    registerWithEureka: false
+    # 是否从Eureka-Server中获取服务注册信息，默认为true
+    fetchRegistry: false
+    serviceUrl:
+      # 默认注册中心地址
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+spring:
+  application:
+    name: eurka-server
+
