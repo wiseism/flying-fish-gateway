@@ -1,16 +1,10 @@
 package com.flying.fish.gateway.service;
 
-import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.gateway.event.DataClientApplicationEvent;
-import com.flying.fish.gateway.event.DataIpApplicationEvent;
-import com.flying.fish.gateway.event.DataRouteApplicationEvent;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
+import com.flying.fish.gateway.event.ApplicationEventPublisherFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
 import org.springframework.cloud.gateway.support.NotFoundException;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -24,17 +18,13 @@ import javax.annotation.Resource;
  * @Version V1.0
  */
 @Service
-public class DynamicRouteService implements ApplicationEventPublisherAware {
+public class DynamicRouteService {
 
     @Resource
     private RouteDefinitionWriter routeDefinitionWriter;
 
-    private ApplicationEventPublisher publisher;
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.publisher = applicationEventPublisher;
-    }
+    @Autowired
+    private ApplicationEventPublisherFactory publisherApplicationEventFactory;
 
     /**
      * 增加路由
@@ -44,7 +34,7 @@ public class DynamicRouteService implements ApplicationEventPublisherAware {
     public void add(RouteDefinition definition) {
         try {
             routeDefinitionWriter.save(Mono.just(definition)).subscribe();
-            this.publisher.publishEvent(new RefreshRoutesEvent(this));
+            publisherApplicationEventFactory.refreshRoutesEvent();
         } catch (Exception e) {
             throw new IllegalArgumentException("添加网关路由失败", e);
         }
@@ -89,14 +79,6 @@ public class DynamicRouteService implements ApplicationEventPublisherAware {
      * @return
      */
     public void fresh(String type){
-        if (StringUtils.equals(type, RouteConstants.IP)) {
-            this.publisher.publishEvent(new DataIpApplicationEvent(this));
-        }else if (StringUtils.equals(type, RouteConstants.CLIENT_ID)){
-            this.publisher.publishEvent(new DataClientApplicationEvent(this));
-        } else if (StringUtils.equals(type, RouteConstants.ROUTE)) {
-            this.publisher.publishEvent(new DataRouteApplicationEvent(this));
-        } else {
-            throw new IllegalArgumentException("刷新网关路由，参数格式不正确");
-        }
+        publisherApplicationEventFactory.publisherEvent(type);
     }
 }

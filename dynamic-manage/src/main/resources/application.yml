@@ -56,7 +56,19 @@ management:
 
 # 配置日志
 logging:
-  level:
-    # log 级别
-    org.springframework.cloud.gateway: debug
+#  level:
+#    com.netflix: info
+#    org.springframework.boot: info
+#    # log 级别
+#    org.springframework.cloud.gateway: debug
+  config: classpath:log4j2.xml
+
+
+# 配置授权访问服务的IP
+system:
+  auth:
+    ip: 127.0.*,192.168.11.*
+
+# 是否启用springboot的debug调试模式，会打印详细日志信息
+debug: true
 

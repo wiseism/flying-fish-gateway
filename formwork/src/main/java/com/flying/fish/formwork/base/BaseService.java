@@ -46,6 +46,16 @@ public class BaseService<T,ID,DAO extends JpaRepository> {
         dao.deleteById(id);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void delete(T t){
+        dao.delete(t);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void deleteInBatch(Iterable<T> ts){
+        dao.deleteInBatch(ts);
+    }
+
     public T findById(ID id){
         Optional<T> optional = dao.findById(id);
         if (optional.isPresent()){

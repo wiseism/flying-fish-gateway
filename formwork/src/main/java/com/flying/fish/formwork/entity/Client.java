@@ -1,6 +1,8 @@
 package com.flying.fish.formwork.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,9 +37,15 @@ public class Client implements java.io.Serializable {
     private String status;
     @Column(name = "remarks")
     private String remarks;
+    /**
+     * 创建时间和修改时间
+     */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "创建时间不能为空")
     @Column(name = "createTime")
     private Date createTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "updateTime")
     private Date updateTime;
 }

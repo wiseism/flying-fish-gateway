@@ -1,5 +1,6 @@
 package com.flying.fish.formwork.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -21,7 +22,8 @@ public class HttpResponseUtils {
      * @param msg
      */
     public static Mono<Void> writeOk(ServerHttpResponse response, String msg) {
-        return write(response, HttpStatus.OK, msg);
+        String jsonMsg = JSONObject.toJSONString(new ApiResult(Constants.SUCCESS, msg, null));
+        return write(response, HttpStatus.OK, jsonMsg);
     }
 
     /**
@@ -30,7 +32,8 @@ public class HttpResponseUtils {
      * @param msg
      */
     public static Mono<Void> writeUnauth(ServerHttpResponse response, String msg) {
-        return write(response, HttpStatus.UNAUTHORIZED, msg);
+        String jsonMsg = JSONObject.toJSONString(new ApiResult(Constants.FAILED, msg, null));
+        return write(response, HttpStatus.UNAUTHORIZED, jsonMsg);
     }
 
     /**
@@ -39,7 +42,8 @@ public class HttpResponseUtils {
      * @param msg
      */
     public static Mono<Void> writeError(ServerHttpResponse response, String msg) {
-        return write(response, HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        String jsonMsg = JSONObject.toJSONString(new ApiResult(Constants.FAILED, msg, null));
+        return write(response, HttpStatus.INTERNAL_SERVER_ERROR, jsonMsg);
     }
 
     /**

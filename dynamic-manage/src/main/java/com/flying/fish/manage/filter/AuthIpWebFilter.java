@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Component
-public class AuthWebFilter implements WebFilter {
+public class AuthIpWebFilter implements WebFilter {
 
     @Value("${system.auth.ip:}")
     private String authIps;

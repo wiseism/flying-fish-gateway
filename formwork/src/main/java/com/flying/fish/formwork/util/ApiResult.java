@@ -11,7 +11,7 @@ import java.util.Date;
  * @Version V1.0
  */
 @Data
-public class ApiResult {
+public class ApiResult implements java.io.Serializable {
 
     private String code;
     private Date timestamp;

@@ -80,7 +80,7 @@ public class RegServerService extends BaseService<RegServer,Long,RegServerDao> {
      */
     @Transactional(readOnly = true)
     public PageResult clientPageList(RegServer regServer, int currentPage, int pageSize){
-        String sql = "SELECT s.id AS regServerId,s.status AS regServerStatus,s.createTime regServerTime,c.* FROM Client c, RegServer s WHERE c.id = s.clientId AND s.routeId=?";
+        String sql = "SELECT s.id AS regServerId,s.status AS regServerStatus,DATE_FORMAT(s.createTime,'%Y-%m-%d %H:%i:%s') as regServerTime,c.* FROM Client c, RegServer s WHERE c.id = s.clientId AND s.routeId=?";
         return pageNativeQuery(sql, Arrays.asList(regServer.getRouteId()), currentPage, pageSize);
     }
 
@@ -93,7 +93,7 @@ public class RegServerService extends BaseService<RegServer,Long,RegServerDao> {
      */
     @Transactional(readOnly = true)
     public PageResult serverPageList(RegServer regServer, int currentPage, int pageSize){
-        String sql = "SELECT s.id AS regServerId,s.status as regServerStatus,s.createTime regServerTime,r.* FROM Route r, RegServer s WHERE r.routeId = s.routeId and s.clientId=?";
+        String sql = "SELECT s.id AS regServerId,s.status as regServerStatus,DATE_FORMAT(s.createTime,'%Y-%m-%d %H:%i:%s') as regServerTime,r.* FROM Route r, RegServer s WHERE r.routeId = s.routeId and s.clientId=?";
         return pageNativeQuery(sql, Arrays.asList(regServer.getClientId()), currentPage, pageSize);
     }
 

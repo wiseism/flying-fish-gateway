@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,46 +25,25 @@ import java.util.Optional;
 @Service
 public class RouteService extends BaseService<Route,Long,RouteDao> {
 
-//    @Autowired
-//    private RouteDao routeDao;
+    @Resource
+    private RegServerService regServerService;
 
-//    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-//    public void save(Route route){
-//        routeDao.save(route);
-//    }
-//
-//    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-//    public void update(Route route){
-//        routeDao.save(route);
-//    }
-//
-//    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-//    public void deleteById(Long id){
-//        routeDao.deleteById(id);
-//    }
-
-//    public Route findById(Long id){
-//        Optional<Route> optional = routeDao.findById(id);
-//        if (optional.isPresent()){
-//            return optional.get();
-//        }
-//        return null;
-//    }
-
-//    public List<Route> list(Route route){
-//        return routeDao.findAll(Example.of(route,ExampleMatcher.matching()),new Sort(Sort.Direction.ASC,"createTime"));
-//    }
-
-//    public PageResult<Route> pageList(Route route, int currentPage, int pageSize){
-//        Sort sort = new Sort(Sort.Direction.DESC, "createTime");
-//        Pageable pageable = PageRequest.of(currentPage-1,pageSize, sort);
-//        Page<Route> pageData  =  routeDao.findAll(Example.of(route), pageable);
-//        PageResult<Route> pageResult = new PageResult<>();
-//        pageResult.setCurrentPage(currentPage);
-//        pageResult.setPageSize(pageSize);
-//        pageResult.setTotalNum(pageData.getTotalElements());
-//        pageResult.setLists(pageData.getContent());
-//        return pageResult;
-//    }
+    /**
+     * 删除网关路由以及已注册的客户端（关联表）
+     * @param id
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void delete(Long id){
+        Route route = this.findById(id);
+        if (route != null) {
+            RegServer regServer = new RegServer();
+            regServer.setRouteId(route.getRouteId());
+            List<RegServer> regServerList = regServerService.findAll(regServer);
+            this.delete(route);
+            if (regServerList != null && regServerList.size()>0) {
+                regServerService.deleteInBatch(regServerList);
+            }
+        }
+    }
 
 }

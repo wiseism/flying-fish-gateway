@@ -2,6 +2,7 @@ package com.flying.fish.gateway.rest;
 
 import com.flying.fish.formwork.entity.Route;
 import com.flying.fish.formwork.util.ApiResult;
+import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.gateway.cache.RouteCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class FallbackController {
     @RequestMapping(value = "/fallback", method = {RequestMethod.GET,RequestMethod.POST})
     public ApiResult fallback(@RequestParam(required = false) String routeId) {
         log.error("触发熔断机制的回调方法:fallback,routeId={}", routeId);
-        return new ApiResult("0","提示：服务响应超时，触发熔断机制，请联系运维人员处理。此消息由网关服务返回！",null);
+        return new ApiResult(Constants.FAILED,"提示：服务响应超时，触发熔断机制，请联系运维人员处理。此消息由网关服务返回！",null);
     }
 
     /**
@@ -37,9 +38,9 @@ public class FallbackController {
         log.error("触发自定义熔断机制的回调方法:fallback,routeId={}", routeId);
         Route route = (Route) RouteCache.get(routeId);
         if (route != null){
-            return new ApiResult("0","提示：" + route.getFallbackMsg(),null);
+            return new ApiResult(Constants.FAILED,"提示：" + route.getFallbackMsg(),null);
         }
-        return new ApiResult("0","提示：服务响应超时，触发自定义熔断机制，请联系运维人员处理。此消息由网关服务返回！",null);
+        return new ApiResult(Constants.FAILED,"提示：服务响应超时，触发自定义熔断机制，请联系运维人员处理。此消息由网关服务返回！",null);
     }
 
 }

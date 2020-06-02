@@ -27,6 +27,7 @@ public class DynamicGatewayApplication {
 
      查看路由信息：http://127.0.0.1:8771/actuator/gateway/routes
      查看过滤器工厂列表：http://127.0.0.1:8771/actuator/gateway/routefilters
+     查看日志等级：http://127.0.0.1:8771/actuator/loggers
      */
 
     /**

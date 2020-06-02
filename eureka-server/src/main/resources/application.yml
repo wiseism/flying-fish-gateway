@@ -8,8 +8,6 @@ server:
   # 服务提供方：eureka-client
   # 作用：注册服务到服务注册中心
 
-
-
 eureka:
   instance:
     hostname: localhost

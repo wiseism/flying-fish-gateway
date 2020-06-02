@@ -13,6 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -44,6 +45,14 @@ public class DataIpApplicationEventListen{
             list.forEach(s -> IpListCache.put(s.getIp(), s.getStatus().equals(Constants.YES)));
         }
         log.info("监听到IP配置发生变更，重新加载IP配置共{}条", size);
+    }
+
+    /**
+     * 第一次初始化加载
+     */
+    @PostConstruct
+    public void initLoadSecureIp(){
+        listenEvent();
     }
 
 }

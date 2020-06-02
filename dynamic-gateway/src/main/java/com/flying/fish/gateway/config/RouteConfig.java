@@ -5,13 +5,18 @@ import com.flying.fish.formwork.config.ApplicationContextProvider;
 import com.flying.fish.formwork.dao.RegServerDao;
 import com.flying.fish.formwork.dao.RouteDao;
 import com.flying.fish.formwork.entity.Route;
+import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.gateway.cache.RouteCache;
+import com.flying.fish.gateway.event.DataClientApplicationEvent;
+import com.flying.fish.gateway.event.DataIpApplicationEvent;
+import com.flying.fish.gateway.event.DataRouteApplicationEvent;
 import com.flying.fish.gateway.filter.ClientIdGatewayFilter;
 import com.flying.fish.gateway.filter.IpGatewayFilter;
 import com.flying.fish.gateway.filter.TokenGatewayFilter;
 import com.flying.fish.gateway.filter.factory.AuthorizeGatewayFilterFactory;
 import com.flying.fish.gateway.service.LoadRouteService;
 import com.flying.fish.gateway.vo.GatewayRouteConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
@@ -21,12 +26,15 @@ import org.springframework.cloud.gateway.route.builder.BooleanSpec;
 import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.gateway.route.builder.UriSpec;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Example;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +47,7 @@ import java.util.function.Function;
  * @Date 2020/04/27
  * @Version V1.0
  */
+@Slf4j
 @Configuration
 public class RouteConfig {
 

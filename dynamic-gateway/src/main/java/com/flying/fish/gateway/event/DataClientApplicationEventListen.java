@@ -11,6 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -69,6 +70,14 @@ public class DataClientApplicationEventListen {
             }
         }
         log.info("监听到客户端配置发生变更，重新加载客户端配置共{}条", size);
+    }
+
+    /**
+     * 第一次初始化加载
+     */
+    @PostConstruct
+    public void initLoadClient(){
+        listenEvent();
     }
 
 }

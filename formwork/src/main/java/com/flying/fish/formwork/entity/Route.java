@@ -1,5 +1,7 @@
 package com.flying.fish.formwork.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -81,11 +83,15 @@ public class Route implements java.io.Serializable {
     private String accessTime;
     @Column(name = "accessCookie")
     private String accessCookie;
-    //创建时间和修改时间
+    /**
+     * 创建时间和修改时间
+     */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "创建时间不能为空")
     @Column(name = "createTime")
     private Date createTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "updateTime")
     private Date updateTime;
 }

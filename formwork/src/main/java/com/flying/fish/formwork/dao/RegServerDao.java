@@ -41,7 +41,7 @@ public interface RegServerDao extends JpaRepository<RegServer, Long> {
     void setRouteAllClientStatus(String routeId, String status, String newStatus);
 
     /**
-     * 查询指定网关服务下的注册的
+     * 查询指定网关服务下的注册的,并且是状态为0允许通行的
      * @return
      */
     @Query(value ="SELECT s.routeId,c.id,c.ip FROM Client c, RegServer s WHERE c.id = s.clientId AND c.status='0' AND s.status='0'")

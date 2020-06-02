@@ -32,6 +32,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.flying.fish</groupId>
@@ -51,6 +55,14 @@
             <artifactId>druid</artifactId>
             <version>1.0.18</version>
         </dependency>
+
+        <!-- 高性能Disruptor并发架构（log4j2异步日志使用） -->
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.3.7</version>
+        </dependency>
+
     </dependencies>
 
 </project>

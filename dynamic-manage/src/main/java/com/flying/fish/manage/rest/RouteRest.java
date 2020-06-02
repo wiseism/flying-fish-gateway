@@ -2,6 +2,7 @@ package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
 import com.flying.fish.formwork.entity.Route;
+import com.flying.fish.formwork.service.RegServerService;
 import com.flying.fish.formwork.service.RouteService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
@@ -30,9 +31,13 @@ public class RouteRest extends BaseRest {
     @Resource
     private RouteService routeService;
 
+    /**
+     * 添加网关路由
+     * @param routeReq
+     * @return
+     */
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    @ResponseBody
-    public Object add(@RequestBody RouteReq routeReq){
+    public ApiResult add(@RequestBody RouteReq routeReq){
         Assert.notNull(routeReq, "未获取到对象");
         Route route = toRoute(routeReq);
         route.setCreateTime(new Date());
@@ -41,18 +46,21 @@ public class RouteRest extends BaseRest {
         return new ApiResult();
     }
 
+    /**
+     * 删除网关路由
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object delete(@RequestParam Long id){
+    public ApiResult delete(@RequestParam Long id){
         Assert.notNull(id, "未获取到对象ID");
         Assert.isTrue(id>0, "ID值错误");
-        routeService.deleteById(id);
+        routeService.delete(id);
         return new ApiResult();
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    @ResponseBody
-    public Object update(@RequestBody RouteReq routeReq){
+    public ApiResult update(@RequestBody RouteReq routeReq){
         Assert.notNull(routeReq, "未获取到对象");
         Route route = toRoute(routeReq);
         Assert.notNull(route.getId(),"未获取到对象ID");
@@ -63,23 +71,20 @@ public class RouteRest extends BaseRest {
     }
 
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object findById(@RequestParam Long id){
+    public ApiResult findById(@RequestParam Long id){
         Assert.notNull(id, "未获取到对象ID");
         Assert.isTrue(id>0, "ID值错误");
         return new ApiResult(routeService.findById(id));
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object list(@RequestBody RouteReq routeReq){
+    public ApiResult list(@RequestBody RouteReq routeReq){
         Assert.notNull(routeReq, "未获取到对象");
         return new ApiResult(routeService.list(toRoute(routeReq)));
     }
 
     @RequestMapping(value = "/pageList", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object pageList(@RequestBody RouteReq routeReq){
+    public ApiResult pageList(@RequestBody RouteReq routeReq){
         Assert.notNull(routeReq, "未获取到对象");
         int currentPage = getCurrentPage(routeReq.getCurrentPage());
         int pageSize = getPageSize(routeReq.getPageSize());
@@ -91,8 +96,7 @@ public class RouteRest extends BaseRest {
     }
 
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object start(@RequestParam Long id){
+    public ApiResult start(@RequestParam Long id){
         Assert.notNull(id, "未获取到对象ID");
         Assert.isTrue(id>0, "ID值错误");
         Route dbRoute = routeService.findById(id);
@@ -102,8 +106,7 @@ public class RouteRest extends BaseRest {
     }
 
     @RequestMapping(value = "/stop", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object stop(@RequestParam Long id){
+    public ApiResult stop(@RequestParam Long id){
         Assert.notNull(id, "未获取到对象ID");
         Assert.isTrue(id>0, "ID值错误");
         Route dbRoute = routeService.findById(id);
@@ -128,7 +131,6 @@ public class RouteRest extends BaseRest {
         RouteHystrixBean hystrix = routeReq.getHystrix();
         RouteLimiterBean limiter = routeReq.getLimiter();
         RouteAccessBean access = routeReq.getAccess();
-
         //添加过滤器
         if (filter != null) {
             List<String> routeFilterList = new ArrayList<>();

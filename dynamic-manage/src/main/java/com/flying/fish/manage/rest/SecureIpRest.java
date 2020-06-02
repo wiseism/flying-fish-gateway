@@ -27,8 +27,7 @@ public class SecureIpRest extends BaseRest {
     private SecureIpService secureIpService;
 
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    @ResponseBody
-    public Object add(@RequestBody SecureIp secureIp) {
+    public ApiResult add(@RequestBody SecureIp secureIp) {
         Assert.notNull(secureIp, "未获取到对象");
         Assert.isTrue(StringUtils.isNotBlank(secureIp.getIp()), "IP值不能为空");
         secureIp.setCreateTime(new Date());
@@ -43,16 +42,14 @@ public class SecureIpRest extends BaseRest {
     }
 
     @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object delete(@RequestParam String ip) {
+    public ApiResult delete(@RequestParam String ip) {
         Assert.isTrue(StringUtils.isNotBlank(ip), "IP值不能为空");
         secureIpService.deleteById(ip);
         return new ApiResult();
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    @ResponseBody
-    public Object update(@RequestBody SecureIp secureIp) {
+    public ApiResult update(@RequestBody SecureIp secureIp) {
         Assert.notNull(secureIp, "未获取到对象");
         Assert.isTrue(StringUtils.isNotBlank(secureIp.getIp()), "IP值不能为空");
         secureIp.setUpdateTime(new Date());
@@ -62,15 +59,13 @@ public class SecureIpRest extends BaseRest {
     }
 
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object findById(@RequestParam String ip) {
+    public ApiResult findById(@RequestParam String ip) {
         Assert.isTrue(StringUtils.isNotBlank(ip), "IP值不能为空");
         return new ApiResult(secureIpService.findById(ip));
     }
 
     @RequestMapping(value = "/pageList", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object pageList(@RequestBody SecureIpReq secureIpReq){
+    public ApiResult pageList(@RequestBody SecureIpReq secureIpReq){
         Assert.notNull(secureIpReq, "未获取到对象");
         int currentPage = getCurrentPage(secureIpReq.getCurrentPage());
         int pageSize = getPageSize(secureIpReq.getPageSize());

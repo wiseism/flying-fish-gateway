@@ -29,8 +29,7 @@ public class ClientRest extends BaseRest {
     private ClientService clientService;
 
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    @ResponseBody
-    public Object add(@RequestBody Client client) {
+    public ApiResult add(@RequestBody Client client) {
         Assert.notNull(client, "未获取到对象");
         client.setId(UUID.randomUUID().toString());
         client.setCreateTime(new Date());
@@ -46,16 +45,14 @@ public class ClientRest extends BaseRest {
     }
 
     @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object delete(@RequestParam String id) {
+    public ApiResult delete(@RequestParam String id) {
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         clientService.deleteById(id);
         return new ApiResult();
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    @ResponseBody
-    public Object update(@RequestBody Client client) {
+    public ApiResult update(@RequestBody Client client) {
         Assert.notNull(client, "未获取到对象");
         Assert.isTrue(StringUtils.isNotBlank(client.getId()), "未获取到对象ID");
         client.setUpdateTime(new Date());
@@ -65,8 +62,7 @@ public class ClientRest extends BaseRest {
     }
 
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object findById(@RequestParam String id) {
+    public ApiResult findById(@RequestParam String id) {
         try{
             Thread.sleep(5 * 1000);
         }catch(Exception e){
@@ -76,22 +72,8 @@ public class ClientRest extends BaseRest {
         return new ApiResult(clientService.findById(id));
     }
 
-    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object list(@RequestBody ClientReq clientReq) {
-        Client client = new Client();
-        if (clientReq != null) {
-            BeanUtils.copyProperties(clientReq, client);
-            if (StringUtils.isBlank(client.getName())) {
-                client.setName(null);
-            }
-        }
-        return new ApiResult(clientService.list(client));
-    }
-
     @RequestMapping(value = "/pageList", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object pageList(@RequestBody ClientReq clientReq) {
+    public ApiResult pageList(@RequestBody ClientReq clientReq) {
         Client client = new Client();
         Integer reqCurrentPage = null;
         Integer reqPageSize = null;
@@ -115,8 +97,7 @@ public class ClientRest extends BaseRest {
     }
 
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object start(@RequestParam String id) {
+    public ApiResult start(@RequestParam String id) {
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Client dbClient = clientService.findById(id);
         dbClient.setStatus(Constants.YES);
@@ -125,8 +106,7 @@ public class ClientRest extends BaseRest {
     }
 
     @RequestMapping(value = "/stop", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Object stop(@RequestParam String id) {
+    public ApiResult stop(@RequestParam String id) {
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Client dbClient = clientService.findById(id);
         dbClient.setStatus(Constants.NO);

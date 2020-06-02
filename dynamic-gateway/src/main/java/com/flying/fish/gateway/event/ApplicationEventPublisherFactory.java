@@ -6,9 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @Description 发布事件，触发监听事件的方法
@@ -16,22 +15,16 @@ import javax.annotation.PostConstruct;
  * @Date 2020/06/02
  * @Version V1.0
  */
+@Lazy
 @Slf4j
 @Component
-public class PublisherApplicationEventFactory implements ApplicationEventPublisherAware {
+public class ApplicationEventPublisherFactory implements ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher publisher;
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
         this.publisher = publisher;
-    }
-
-    public void publisherApplicationEvent(){
-        this.publisher.publishEvent(new DataRouteApplicationEvent(this));
-        this.publisher.publishEvent(new DataClientApplicationEvent(this));
-        this.publisher.publishEvent(new DataIpApplicationEvent(this));
-        log.info("刷新网关路由初始数据：route,clientId,ip");
     }
 
     /**

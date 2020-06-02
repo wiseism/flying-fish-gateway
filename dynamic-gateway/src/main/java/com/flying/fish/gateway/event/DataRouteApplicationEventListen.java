@@ -46,11 +46,6 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
         this.publisher = publisher;
     }
 
-    @PostConstruct
-    public void init() {
-        load();
-    }
-
     /**
      * 监听事件刷新配置；
      * 1.CustomApplicationEvent发布后，即触发listenEvent事件方法；
@@ -59,7 +54,7 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
      */
     @EventListener(classes = DataRouteApplicationEvent.class)
     public void listenEvent() {
-        load();
+        initLoadRoute();
         this.publisher.publishEvent(new RefreshRoutesEvent(this));
     }
 
@@ -72,10 +67,20 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
         return Flux.fromIterable(routeDefinitions);
     }
 
-    /**
-     * 加载数据库中的路由信息
-     */
-    public void load(){
+    @Deprecated
+    @Override
+    public Mono<Void> save(Mono<RouteDefinition> route) {
+        return Mono.defer(() -> Mono.error(new NotFoundException("此save方法不提供功能实现，请勿调用")));
+    }
+
+    @Deprecated
+    @Override
+    public Mono<Void> delete(Mono<String> routeId) {
+        return Mono.defer(() -> Mono.error(new NotFoundException("此delete方法不提供功能实现，请勿调用")));
+    }
+
+    @PostConstruct
+    public void initLoadRoute(){
         Route query = new Route();
         query.setStatus(Constants.YES);
         //一定要清空routeDefinitions否则每次刷新会往集合中添加重复数据
@@ -92,18 +97,6 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
         }catch(Exception e){
             log.error("加载数据库中网关路由配置异常：",e);
         }
-    }
-
-    @Deprecated
-    @Override
-    public Mono<Void> save(Mono<RouteDefinition> route) {
-        return Mono.defer(() -> Mono.error(new NotFoundException("此save方法不提供功能实现，请勿调用")));
-    }
-
-    @Deprecated
-    @Override
-    public Mono<Void> delete(Mono<String> routeId) {
-        return Mono.defer(() -> Mono.error(new NotFoundException("此delete方法不提供功能实现，请勿调用")));
     }
 
 }

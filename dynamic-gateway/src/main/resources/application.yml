@@ -35,7 +35,7 @@ management:
     web:
       exposure:
         include:
-        # 开放所有端点health，info，metrics，通过actuator/+端点名就可以获取相应的信息。默认打开health和info
+        # 开放所有端点health，info，metrics，通过actuator/+端点名就可以获取相应的信息。开发用*，上生产请取消。默认打开health和info
         - "*"
   health:
     # 开启后打印详细信息
@@ -45,6 +45,7 @@ management:
 
 # 配置日志
 logging:
+  config: classpath:log4j2.xml
   level:
     # log 级别
     org.springframework.cloud.gateway: debug
