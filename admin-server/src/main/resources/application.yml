@@ -1,7 +1,7 @@
 # 本地服务访问
 server:
   # 服务端口
-  port: 8770
+  port: 8769
   # 服务IP
   address: 0.0.0.0
 
@@ -18,26 +18,19 @@ eureka:
     ipAddress: 192.168.11.45
     # 优先使用IP名注册
     prefer-ip-address: true
+    # 注册到eureaka的分组名称
+    app-group-name: http-gateway
 
 spring:
   application:
     # 应用服务名
-    name: dynamic-manage
+    name: admin-server
   profiles:
-    active: db
-  # redis连接配置
-  redis:
-    host: localhost
-    port: 6379
-    database: 0
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          # 启用本地化网关
-          enabled: true
-          # 将服务名转换为小写
-          lower-case-service-id: true
+    active:
+  security:
+    user:
+      name: admin
+      password: admin
 
 # 启用服务健康检测，注册中心将通过http://host:port/actuator/health 检测服务的存活，默认10s一次
 # 查看网关的路由：http://localhost:8888/actuator/gateway/routes
@@ -46,7 +39,7 @@ management:
     web:
       exposure:
         include:
-        # 开放所有端点health，info，metrics，通过actuator/+端点名就可以获取相应的信息。默认打开health和info
+        # 开放所有端点health，info，metrics，通过actuator/+端点名就可以获取相应的信息。开发用*，上生产请取消。默认打开health和info
         - "*"
   health:
     # 开启后打印详细信息
@@ -56,19 +49,6 @@ management:
 
 # 配置日志
 logging:
-#  level:
-#    com.netflix: info
-#    org.springframework.boot: info
-#    # log 级别
-#    org.springframework.cloud.gateway: debug
-  config: classpath:log4j2.xml
-
-
-# 配置授权访问服务的IP
-system:
-  auth:
-    ip: 127.0.*,192.168.11.*
-
-# 是否启用springboot的debug调试模式，会打印详细日志信息
-debug: true
-
+  level:
+    # log 级别
+    org.springframework.cloud.gateway: debug
