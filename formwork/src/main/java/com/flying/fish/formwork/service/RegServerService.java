@@ -74,6 +74,17 @@ public class RegServerService extends BaseService<RegServer,Long,RegServerDao> {
     /**
      * 查询当前网关路由服务下已注册的客户端
      * @param regServer
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<Map<String,Object>> regClientList(RegServer regServer){
+        String sql = "SELECT s.id AS regServerId,s.status AS regServerStatus,DATE_FORMAT(s.createTime,'%Y-%m-%d %H:%i:%s') as regServerTime,c.* FROM Client c, RegServer s WHERE c.id = s.clientId AND s.routeId=?";
+        return nativeQuery(sql, Arrays.asList(regServer.getRouteId()));
+    }
+
+    /**
+     * 查询当前网关路由服务下已注册的客户端
+     * @param regServer
      * @param currentPage
      * @param pageSize
      * @return

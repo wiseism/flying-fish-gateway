@@ -96,6 +96,18 @@ public class RegServerRest extends BaseRest {
         return new ApiResult(regServerService.clientPageList(regServer, currentPage, pageSize));
     }
 
+    @RequestMapping(value = "/regClientList", method = {RequestMethod.GET, RequestMethod.POST})
+    public ApiResult regClientList(@RequestBody RegServerReq regServerReq) {
+        Assert.notNull(regServerReq, "未获取到对象");
+        RegServer regServer = new RegServer();
+        if (StringUtils.isNotBlank(regServerReq.getRouteId())){
+            regServer.setRouteId(regServerReq.getRouteId());
+        }else {
+            throw new IllegalArgumentException("未获取到对象查询ID");
+        }
+        return new ApiResult(regServerService.regClientList(regServer));
+    }
+
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult start(@RequestParam Long id) {
         Assert.notNull(id, "未获取到对象ID");

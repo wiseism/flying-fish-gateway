@@ -27,6 +27,9 @@ public class SecureIp implements java.io.Serializable {
     @NotNull(message = "IP名称不能为空")
     @Size(min = 4, max = 16, message = "IP名称字段长度必需在2到40个字符内")
     private String ip;
+    /**
+     * 状态，0是启用，1是禁用
+     */
     @NotNull(message = "IP状态不能为空")
     @Size(min = 1, max = 2, message = "状态字段长度必需在1个字符")
     @Column(name = "status")

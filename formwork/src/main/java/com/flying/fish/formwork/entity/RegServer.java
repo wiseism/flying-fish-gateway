@@ -30,6 +30,9 @@ public class RegServer {
     @Size(min = 2, max = 40, message = "网关路由ID长度必需在2到40个字符内")
     @Column(name = "routeId")
     private String routeId;
+    /**
+     * 状态，0是启用，1是禁用
+     */
     @Column(name = "status")
     private String status;
     /**

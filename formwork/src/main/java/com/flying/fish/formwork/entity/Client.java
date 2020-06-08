@@ -33,6 +33,9 @@ public class Client implements java.io.Serializable {
     private String groupCode;
     @Column(name = "ip")
     private String ip;
+    /**
+     * 状态，0是启用，1是禁用
+     */
     @Column(name = "status")
     private String status;
     @Column(name = "remarks")

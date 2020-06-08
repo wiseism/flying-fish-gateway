@@ -67,6 +67,9 @@ public class Route implements java.io.Serializable {
     private Integer burstCapacity;
     @Column(name = "weight")
     private Integer weight;
+    /**
+     * 状态，0是启用，1是禁用
+     */
     @Column(name = "status")
     private String status;
     @Column(name = "stripPrefix")

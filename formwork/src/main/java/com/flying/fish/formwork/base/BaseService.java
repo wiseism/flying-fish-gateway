@@ -125,6 +125,23 @@ public class BaseService<T,ID,DAO extends JpaRepository> {
     }
 
     /**
+     * 分页原生SQL查询
+     * @param sql
+     * @param params
+     * @return
+     */
+    public List<Map<String,Object>> nativeQuery(String sql, List<Object> params){
+        Query query = entityManager.createNativeQuery(sql);
+        if (params != null) {
+            for (int i = 0; i < params.size(); i++) {
+                query.setParameter(i + 1, params.get(i));
+            }
+        }
+        query.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);//转换成map
+        return query.getResultList();
+    }
+
+    /**
      * 分页结果
      * @param list
      * @param currentPage
