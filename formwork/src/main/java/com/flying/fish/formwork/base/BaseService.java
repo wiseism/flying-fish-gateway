@@ -37,6 +37,11 @@ public class BaseService<T,ID,DAO extends JpaRepository> {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public List<T> saveAll(Iterable<T> ts){
+        return dao.saveAll(ts);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public void update(T t){
         dao.save(t);
     }

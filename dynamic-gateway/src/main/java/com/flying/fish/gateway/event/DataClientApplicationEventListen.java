@@ -34,6 +34,14 @@ public class DataClientApplicationEventListen {
      */
     @EventListener(classes = DataClientApplicationEvent.class)
     public void listenEvent() {
+        initLoadClient();
+    }
+
+    /**
+     * 第一次初始化加载
+     */
+    @PostConstruct
+    public void initLoadClient(){
         List list = regServerService.allRegClientList();
         ClientIdCache.clear();
         RegIpListCache.clear();
@@ -70,14 +78,6 @@ public class DataClientApplicationEventListen {
             }
         }
         log.info("监听到客户端配置发生变更，重新加载客户端配置共{}条", size);
-    }
-
-    /**
-     * 第一次初始化加载
-     */
-    @PostConstruct
-    public void initLoadClient(){
-        listenEvent();
     }
 
 }

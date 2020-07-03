@@ -48,7 +48,7 @@ public class LogGlobalFilter implements GlobalFilter, Ordered {
             String remoteAddr = NetworkIpUtils.getIpAddress(request);
             String method = request.getMethod().name();
             HttpStatus httpStatus = response.getStatusCode();
-            int status = httpStatus == null ? 500 : httpStatus.value();
+            int status = (httpStatus == null) ? 500 : httpStatus.value();
             long length = headers.getContentLength();
             URI uri = request.getURI();
             String host = uri.getHost();
@@ -57,7 +57,7 @@ public class LogGlobalFilter implements GlobalFilter, Ordered {
             String userInfo = uri.getUserInfo();
             userInfo = (userInfo == null) ? PLACEHOLDER : userInfo;
             List<String> userAgentList = headers.get("User-Agent");
-            String userAgent = userAgentList == null ? PLACEHOLDER : userAgentList.toString();
+            String userAgent = (userAgentList == null) ? PLACEHOLDER : userAgentList.toString();
             MediaType mediaType = headers.getContentType();
             String contentType = (mediaType == null) ? PLACEHOLDER : mediaType.toString();
             long useOfTime = System.currentTimeMillis() - requestTime.getTime();

@@ -35,6 +35,14 @@ public class DataIpApplicationEventListen{
      */
     @EventListener(classes = DataIpApplicationEvent.class)
     public void listenEvent() {
+        initLoadSecureIp();
+    }
+
+    /**
+     * 第一次初始化加载
+     */
+    @PostConstruct
+    public void initLoadSecureIp(){
         SecureIp secureIp = new SecureIp();
         secureIp.setStatus(Constants.YES);
         List<SecureIp> list = secureIpService.findAll(secureIp);
@@ -45,14 +53,6 @@ public class DataIpApplicationEventListen{
             list.forEach(s -> IpListCache.put(s.getIp(), s.getStatus().equals(Constants.YES)));
         }
         log.info("监听到IP配置发生变更，重新加载IP配置共{}条", size);
-    }
-
-    /**
-     * 第一次初始化加载
-     */
-    @PostConstruct
-    public void initLoadSecureIp(){
-        listenEvent();
     }
 
 }

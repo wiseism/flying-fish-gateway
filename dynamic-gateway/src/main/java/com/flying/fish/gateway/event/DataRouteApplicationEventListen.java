@@ -79,6 +79,9 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
         return Mono.defer(() -> Mono.error(new NotFoundException("此delete方法不提供功能实现，请勿调用")));
     }
 
+    /**
+     * 初始化完毕后，加载路由
+     */
     @PostConstruct
     public void initLoadRoute(){
         Route query = new Route();

@@ -7,6 +7,7 @@ package com.flying.fish.formwork.util;
  * @Version V1.0
  */
 public class RouteConstants {
+    public static final String BALANCED = "balanced";
     public static final String ROUTE = "route";
     public static final String AUTHORIZE = "Authorize";
     public static final String CLIENT_ID = "clientId";
@@ -20,6 +21,7 @@ public class RouteConstants {
     public static final String _GENKEY_ = "_genkey_";
     public static final String PATH = "Path";
     public static final String METHOD = "Method";
+    public static final String WEIGHT = "Weight";
     public static final String STRIP_PREFIX = "StripPrefix";
     public static final String ADD_REQUEST_PARAMETER = "AddRequestParameter";
 

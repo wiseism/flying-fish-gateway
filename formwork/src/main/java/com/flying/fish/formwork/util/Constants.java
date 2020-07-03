@@ -9,13 +9,13 @@ package com.flying.fish.formwork.util;
 public class Constants {
 
     /**
-     * 0正常，1无效
+     * 应用数据库字段：0正常，1无效
      */
     public static final String YES = "0";
     public static final String NO = "1";
 
     /**
-     * 0表示未获取响应结果（异常），1表示有响应结果（正常），-1表示未登录或无权限
+     * 应用前后端字段：0表示未获取响应结果（异常），1表示有响应结果（正常），-1表示未登录或无权限
      */
     public static final String SUCCESS = "1";
     public static final String FAILED = "0";

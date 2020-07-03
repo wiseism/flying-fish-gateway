@@ -96,15 +96,23 @@ public class LoadRouteService {
         List<FilterDefinition> filters = new ArrayList<>();
         definition.setFilters(filters);
         definition.setUri(this.getURI(r.getUri()));
+        //断言路径
         if (StringUtils.isNotBlank(r.getPath())) {
             predicates.add(setPredicateDefinition(RouteConstants.PATH, r.getPath()));
         }
+        //权重
+        if (r.getWeight() != null && r.getWeight().intValue() > 0) {
+            predicates.add(setPredicateDefinition(RouteConstants.WEIGHT, RouteConstants.BALANCED, String.valueOf(r.getWeight())));
+        }
+        //请求模式
         if (StringUtils.isNotBlank(r.getMethod())) {
             predicates.add(setPredicateDefinition(RouteConstants.METHOD, r.getMethod()));
         }
-        if (r.getStripPrefix() != null && r.getStripPrefix() > 0) {
-            filters.add(setFilterDefinition(RouteConstants.STRIP_PREFIX, r.getStripPrefix().intValue() + ""));
+        //URL截取方式
+        if (r.getStripPrefix() != null && r.getStripPrefix().intValue() > 0) {
+            filters.add(setFilterDefinition(RouteConstants.STRIP_PREFIX, String.valueOf(r.getStripPrefix())));
         }
+        //请求参数
         if (StringUtils.isNotBlank(r.getRequestParameter())) {
             String[] parameters = r.getRequestParameter().split(Constants.SEPARATOR_SIGN);
             filters.add(setFilterDefinition(RouteConstants.ADD_REQUEST_PARAMETER, parameters));
