@@ -30,22 +30,21 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
      * @return
      */
     @Transactional(readOnly = true)
-    public List loadServerList(Long balancedId){
+    public List loadServerList(String balancedId){
         //String sql ="SELECT r.id,r.name,r.routeId,r.groupCode,r.uri,r.path,r.method FROM route r WHERE r.status='0' AND r.routeId IN (SELECT l.routeId FROM loadserver l WHERE l.balancedId=?)";
         //return pageNativeQuery(sql, Arrays.asList(balancedId), currentPage, pageSize);
         return loadServerDao.queryLoadServerList(balancedId);
     }
 
     /**
-     * 查询当前负载网关未加配置路由服务
-     * @param balancedId
+     * 查询所有路由服务
      * @param currentPage
      * @param pageSize
      * @return
      */
     @Transactional(readOnly = true)
-    public PageResult notLoadServerPageList(Long balancedId, int currentPage, int pageSize){
-        String sql ="SELECT r.id,r.name,r.routeId,r.groupCode,r.uri,r.path,r.method FROM route r WHERE r.status='0' ";
+    public PageResult notLoadServerPageList(int currentPage, int pageSize){
+        String sql ="SELECT r.id,r.name,r.groupCode,r.uri,r.path,r.method FROM route r WHERE r.status='0' ";
 //        if (balancedId != null && balancedId > 0){
 //            sql += " AND r.id NOT IN (SELECT l.routePrimaryId FROM loadserver l WHERE l.balancedId=?)";
 //            return pageNativeQuery(sql, Arrays.asList(balancedId), currentPage, pageSize);
@@ -57,7 +56,7 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
      *  删除指定负载下所有的路由服务
      * @param balancedId
      */
-    public void deleteAllByBalancedId(Long balancedId){
+    public void deleteAllByBalancedId(String balancedId){
         loadServerDao.deleteAllByBalancedId(balancedId);
     }
 
@@ -66,7 +65,7 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
      * @param balancedId
      * @return
      */
-    public List<LoadServer> queryByBalancedId(Long balancedId){
+    public List<LoadServer> queryByBalancedId(String balancedId){
         return loadServerDao.queryByBalancedId(balancedId);
     }
 
@@ -74,7 +73,7 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
      * 保存指定负载下的所有路由服务
      * @param serverList
      */
-    public void updates(Long balancedId, List<LoadServer> serverList){
+    public void updates(String balancedId, List<LoadServer> serverList){
         List<LoadServer> dbServerList = this.queryByBalancedId(balancedId);
         Map<Long, Integer> dbIdMap = new HashMap<>();
         for (LoadServer loadServer : serverList){

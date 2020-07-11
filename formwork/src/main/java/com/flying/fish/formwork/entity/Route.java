@@ -22,16 +22,14 @@ import java.util.Date;
 public class Route implements java.io.Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(message = "网关路由ID不能为空")
+    @Size(min = 2, max = 40, message = "网关路由ID长度必需在2到40个字符内")
+    private String id;
     @NotNull(message = "网关路由名称不能为空")
     @Size(min = 2, max = 40, message = "网关路由名称长度必需在2到40个字符内")
     @Column(name = "name" )
     private String name;
-    @NotNull(message = "网关路由ID不能为空")
-    @Size(min = 2, max = 40, message = "网关路由ID长度必需在2到40个字符内")
-    @Column(name = "routeId")
-    private String routeId;
     @NotNull(message = "客户端分组不能为空")
     @Column(name = "groupCode")
     private String groupCode;

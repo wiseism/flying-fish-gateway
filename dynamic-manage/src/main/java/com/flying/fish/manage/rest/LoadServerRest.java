@@ -7,6 +7,7 @@ import com.flying.fish.formwork.service.LoadServerService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.manage.bean.BalancedReq;
 import com.flying.fish.manage.bean.LoadServerReq;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,12 +58,12 @@ public class LoadServerRest extends BaseRest {
     private ApiResult list(LoadServerReq loadServerReq, boolean isReg){
         Assert.notNull(loadServerReq, "未获取到对象");
         if (isReg) {
-            Assert.isTrue(loadServerReq.getBalancedId() != null && loadServerReq.getBalancedId() > 0, "未获取到对象ID");
+            Assert.isTrue(StringUtils.isNotBlank(loadServerReq.getBalancedId()), "未获取到对象ID");
             return new ApiResult(loadServerService.loadServerList(loadServerReq.getBalancedId()));
         }else {
             int currentPage = getCurrentPage(loadServerReq.getCurrentPage());
             int pageSize = getPageSize(loadServerReq.getPageSize());
-            return new ApiResult(loadServerService.notLoadServerPageList(loadServerReq.getBalancedId(), currentPage, pageSize));
+            return new ApiResult(loadServerService.notLoadServerPageList(currentPage, pageSize));
         }
     }
 

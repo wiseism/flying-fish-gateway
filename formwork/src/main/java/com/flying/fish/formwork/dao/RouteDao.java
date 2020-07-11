@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Date 2020/05/14
  * @Version V1.0
  */
-public interface RouteDao extends JpaRepository<Route, Long> {
+public interface RouteDao extends JpaRepository<Route, String> {
 
 }

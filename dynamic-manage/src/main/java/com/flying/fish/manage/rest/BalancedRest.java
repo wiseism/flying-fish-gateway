@@ -2,15 +2,16 @@ package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
 import com.flying.fish.formwork.entity.Balanced;
-import com.flying.fish.formwork.entity.Client;
 import com.flying.fish.formwork.entity.LoadServer;
 import com.flying.fish.formwork.service.BalancedService;
 import com.flying.fish.formwork.service.LoadServerService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
+import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.manage.bean.BalancedReq;
 import com.flying.fish.manage.bean.BalancedRsp;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Description 负载配置管理控制器
@@ -35,6 +37,9 @@ public class BalancedRest extends BaseRest {
     @Resource
     private LoadServerService loadServerService;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
     /**
      * 添加负载配置
      * @param balancedReq
@@ -44,6 +49,7 @@ public class BalancedRest extends BaseRest {
     public ApiResult add(@RequestBody BalancedReq balancedReq) {
         Assert.notNull(balancedReq, "未获取到对象");
         Balanced balanced = new Balanced();
+        balanced.setId(UUID.randomUUID().toString());
         balanced.setName(balancedReq.getName());
         balanced.setGroupCode(balancedReq.getGroupCode());
         balanced.setLoadUri(balancedReq.getLoadUri());
@@ -67,6 +73,7 @@ public class BalancedRest extends BaseRest {
                 loadServer.setCreateTime(new Date());
                 loadServerService.save(loadServer);
             }
+            this.setRouteCacheVersion();
         }
         return new ApiResult();
     }
@@ -77,9 +84,10 @@ public class BalancedRest extends BaseRest {
      * @return
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult delete(@RequestParam Long id) {
-        Assert.isTrue(id != null && id > 0, "未获取到对象ID");
+    public ApiResult delete(@RequestParam String id) {
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         balancedService.deleteAndServer(id);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
@@ -91,7 +99,7 @@ public class BalancedRest extends BaseRest {
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody BalancedReq balancedReq) {
         Assert.notNull(balancedReq, "未获取到对象");
-        Assert.isTrue(balancedReq.getId() != null && balancedReq.getId() > 0, "未获取到对象ID");
+        Assert.isTrue(StringUtils.isNotBlank(balancedReq.getId()), "未获取到对象ID");
         this.validate(balancedReq);
         Balanced balanced = balancedService.findById(balancedReq.getId());
         if (balanced != null) {
@@ -103,6 +111,7 @@ public class BalancedRest extends BaseRest {
             balanced.setUpdateTime(new Date());
             balancedService.update(balanced);
             loadServerService.updates(balanced.getId(), balancedReq.getServerList());
+            this.setRouteCacheVersion();
         }
         return new ApiResult();
     }
@@ -113,8 +122,8 @@ public class BalancedRest extends BaseRest {
      * @return
      */
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult findById(@RequestParam Long id) {
-        Assert.isTrue(id != null && id > 0, "未获取到对象ID");
+    public ApiResult findById(@RequestParam String id) {
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Balanced balanced = balancedService.findById(id);
         if (balanced != null) {
             List<LoadServer> serverList = loadServerService.queryByBalancedId(id);
@@ -141,6 +150,9 @@ public class BalancedRest extends BaseRest {
             if (StringUtils.isNotBlank(balancedReq.getStatus())) {
                 balanced.setStatus(balancedReq.getStatus());
             }
+            if (StringUtils.isNotBlank(balancedReq.getGroupCode())) {
+                balanced.setGroupCode(balancedReq.getGroupCode());
+            }
         }
         int currentPage = getCurrentPage(balancedReq.getCurrentPage());
         int pageSize = getPageSize(balancedReq.getPageSize());
@@ -153,11 +165,12 @@ public class BalancedRest extends BaseRest {
      * @return
      */
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult start(@RequestParam Long id) {
-        Assert.isTrue(id != null && id > 0, "未获取到对象ID");
+    public ApiResult start(@RequestParam String id) {
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Balanced dbBalanced = balancedService.findById(id);
         dbBalanced.setStatus(Constants.YES);
         balancedService.update(dbBalanced);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
@@ -167,12 +180,20 @@ public class BalancedRest extends BaseRest {
      * @return
      */
     @RequestMapping(value = "/stop", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult stop(@RequestParam Long id) {
-        Assert.isTrue(id != null && id > 0, "未获取到对象ID");
+    public ApiResult stop(@RequestParam String id) {
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Balanced dbBalanced = balancedService.findById(id);
         dbBalanced.setStatus(Constants.NO);
         balancedService.update(dbBalanced);
+        this.setRouteCacheVersion();
         return new ApiResult();
+    }
+
+    /**
+     * 对路由数据进行变更后，设置redis中缓存的版本号
+     */
+    private void setRouteCacheVersion(){
+        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.ROUTE, String.valueOf(System.currentTimeMillis()));
     }
 
 }

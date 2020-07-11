@@ -27,7 +27,7 @@ public class TimeFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行time过滤 ", route.getRouteId());
+        log.info("处理网关路由请求{},执行time过滤 ", route.getId());
         if (route.getFilterAuthorizeName().contains("time")){
             String accessTime = route.getAccessTime();
             Assert.isTrue(StringUtils.isNotBlank(accessTime),"自定义time时间段不能为空");

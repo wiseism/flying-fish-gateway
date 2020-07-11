@@ -1,0 +1,29 @@
+# 本地服务访问
+server:
+  # 服务端口
+  port: 8769
+  # 服务IP
+  address: 0.0.0.0
+
+# eureka注册中心
+eureka:
+  client:
+    serviceUrl:
+      # 默认注册中心地址，如果为集群，请指向另一个注册中心，使用域名作为访问路径，如有多个节点，使用逗号','分隔
+      defaultZone: http://127.0.0.1:8761/eureka/,http://192.168.110.35:8761/eureka/,http://192.168.110.36:8761/eureka/
+  instance:
+    # 注册到eureka的主机名称
+    hostname: 192.168.11.45
+    # 注册到eureka的主机IP
+    ipAddress: 192.168.11.45
+    # 优先使用IP名注册
+    prefer-ip-address: true
+
+spring:
+  application:
+    # 应用服务名
+    name: examples
+
+# 是否启用springboot的debug调试模式，会打印详细日志信息
+debug: true
+

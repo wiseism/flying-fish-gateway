@@ -5,6 +5,7 @@ import com.flying.fish.formwork.config.ApplicationContextProvider;
 import com.flying.fish.formwork.dao.RegServerDao;
 import com.flying.fish.formwork.dao.RouteDao;
 import com.flying.fish.formwork.entity.Route;
+import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.gateway.cache.RouteCache;
 import com.flying.fish.gateway.event.DataClientApplicationEvent;
@@ -121,11 +122,11 @@ public class RouteConfig {
     @Deprecated
     public RouteLocator routeLocators(RouteLocatorBuilder builder){
         Route query = new Route();
-        query.setStatus("0");
+        query.setStatus(Constants.YES);
         List<Route> routeList = routeDao.findAll(Example.of(query));
         RouteLocatorBuilder.Builder routeBuilder = builder.routes();
         routeList.forEach(route->{
-            RouteCache.put(route.getRouteId(), route);
+            RouteCache.put(route.getId(), route);
             GatewayRouteConfig gatewayRouteConfig = loadRouteService.loadRouteConfig(route);
             routeBuilder.route(r -> {
                 //设置断言

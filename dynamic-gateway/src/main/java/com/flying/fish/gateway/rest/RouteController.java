@@ -106,7 +106,7 @@ public class RouteController {
      * @return
      */
     @GetMapping(value = "/load")
-    public ApiResult load(@RequestParam Long id) {
+    public ApiResult load(@RequestParam String id) {
         Assert.notNull(id, "路由ID不能为空");
         Route route = routeService.findById(id);
         RouteDefinition routeDefinition = loadRouteService.loadRouteDefinition(route);

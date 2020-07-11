@@ -23,7 +23,7 @@ import java.util.Optional;
  * @Version V1.0
  */
 @Service
-public class RouteService extends BaseService<Route,Long,RouteDao> {
+public class RouteService extends BaseService<Route,String,RouteDao> {
 
     @Resource
     private RegServerService regServerService;
@@ -33,11 +33,11 @@ public class RouteService extends BaseService<Route,Long,RouteDao> {
      * @param id
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public void delete(Long id){
+    public void delete(String id){
         Route route = this.findById(id);
         if (route != null) {
             RegServer regServer = new RegServer();
-            regServer.setRouteId(route.getRouteId());
+            regServer.setRouteId(id);
             List<RegServer> regServerList = regServerService.findAll(regServer);
             this.delete(route);
             if (regServerList != null && regServerList.size()>0) {

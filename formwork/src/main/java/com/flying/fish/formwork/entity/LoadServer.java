@@ -22,11 +22,11 @@ public class LoadServer implements java.io.Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull(message = "路由主键ID值不能为空")
-    @Column(name = "routePrimaryId")
-    private Long routePrimaryId;
+    @Column(name = "routeId")
+    private String routeId;
     @NotNull(message = "负载ID值不能为空")
     @Column(name = "balancedId")
-    private Long balancedId;
+    private String balancedId;
     @NotNull(message = "网关路由权重值不能为空")
     @Column(name = "weight")
     private Integer weight;

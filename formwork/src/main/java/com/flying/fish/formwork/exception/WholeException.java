@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class WholeException {
 
     static{
-        log.info("加载全局异常捕获类：" , WholeException.class.toString());
+        log.info("加载全局异常捕获类" );
     }
 
     /**

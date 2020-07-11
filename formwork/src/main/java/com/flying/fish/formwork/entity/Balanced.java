@@ -20,8 +20,9 @@ import java.util.Date;
 public class Balanced implements java.io.Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @NotNull(message = "负载ID不能为空")
+    @Size(min = 2, max = 40, message = "负载ID长度必需在2到40个字符内")
+    private String id;
     @NotNull(message = "负载名称不能为空")
     @Size(min = 2, max = 40, message = "负载名称长度必需在2到40个字符内")
     @Column(name = "name")

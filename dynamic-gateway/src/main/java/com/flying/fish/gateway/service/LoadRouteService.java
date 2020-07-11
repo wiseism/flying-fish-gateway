@@ -89,7 +89,7 @@ public class LoadRouteService {
      */
     public RouteDefinition loadRouteDefinition(Route r){
         RouteDefinition definition = new RouteDefinition();
-        definition.setId(r.getRouteId());
+        definition.setId(r.getId());
         definition.setOrder(0);
         List<PredicateDefinition> predicates = new ArrayList<>();
         definition.setPredicates(predicates);
@@ -102,7 +102,7 @@ public class LoadRouteService {
         }
         //权重
         if (r.getWeight() != null && r.getWeight().intValue() > 0) {
-            predicates.add(setPredicateDefinition(RouteConstants.WEIGHT, RouteConstants.BALANCED, String.valueOf(r.getWeight())));
+            predicates.add(setPredicateDefinition(RouteConstants.WEIGHT, r.getWeightName(), String.valueOf(r.getWeight())));
         }
         //请求模式
         if (StringUtils.isNotBlank(r.getMethod())) {
@@ -141,12 +141,12 @@ public class LoadRouteService {
             if (r.getFilterHystrixName().equals(RouteConstants.Hystrix.DEFAULT)) {
                 filter.setName(RouteConstants.Hystrix.DEFAULT_NAME);
                 args.put(RouteConstants.Hystrix.NAME, RouteConstants.Hystrix.DEFAULT_HYSTRIX_NAME);
-                args.put(RouteConstants.Hystrix.FALLBACK_URI, RouteConstants.Hystrix.DEFAULT_FALLBACK_URI + r.getRouteId());
+                args.put(RouteConstants.Hystrix.FALLBACK_URI, RouteConstants.Hystrix.DEFAULT_FALLBACK_URI + r.getId());
             } else {
                 filter.setName(RouteConstants.Hystrix.CUSTOM_NAME);
                 //自定义名称必需保持业务的唯一性，否则所有自定义熔断将共用一个配置（用id是因为值短，只要能保证hystrixName不重复就行）
                 args.put(RouteConstants.Hystrix.NAME, RouteConstants.Hystrix.CUSTOM_HYSTRIX_NAME + r.getId());
-                args.put(RouteConstants.Hystrix.FALLBACK_URI, RouteConstants.Hystrix.CUSTOM_FALLBACK_URI + r.getRouteId());
+                args.put(RouteConstants.Hystrix.FALLBACK_URI, RouteConstants.Hystrix.CUSTOM_FALLBACK_URI + r.getId());
             }
             filter.setArgs(args);
             filters.add(filter);
@@ -233,7 +233,7 @@ public class LoadRouteService {
      */
     public GatewayRouteConfig loadRouteConfig(Route r){
         GatewayRouteConfig config = new GatewayRouteConfig();
-        config.setId(r.getRouteId());
+        config.setId(r.getId());
         config.setOrder(0);
         config.setUri(r.getUri());
         //断言路径
@@ -259,13 +259,13 @@ public class LoadRouteService {
             String names = r.getFilterGatewaName();
             List<GatewayFilter> filters = new ArrayList<>();
             if (names.indexOf(RouteConstants.IP) != -1) {
-                filters.add(new IpGatewayFilter(r.getRouteId()));
+                filters.add(new IpGatewayFilter(r.getId()));
             }
             if (names.indexOf(RouteConstants.ID) != -1) {
-                filters.add(new ClientIdGatewayFilter(r.getRouteId()));
+                filters.add(new ClientIdGatewayFilter(r.getId()));
             }
             if (names.indexOf(RouteConstants.TOKEN) != -1) {
-                filters.add(new TokenGatewayFilter(r.getRouteId()));
+                filters.add(new TokenGatewayFilter(r.getId()));
             }
             config.setGatewayFilter(filters.toArray(new GatewayFilter[]{}));
         }
@@ -274,12 +274,12 @@ public class LoadRouteService {
             //默认内置熔断
             if (r.getFilterHystrixName().equals(RouteConstants.Hystrix.DEFAULT)) {
                 config.setHystrixName(RouteConstants.Hystrix.DEFAULT_HYSTRIX_NAME);
-                config.setFallbackUri(RouteConstants.Hystrix.DEFAULT_FALLBACK_URI + r.getRouteId());
+                config.setFallbackUri(RouteConstants.Hystrix.DEFAULT_FALLBACK_URI + r.getId());
                 //自定义熔断
             } else {
                 //自定义名称必需保持业务的唯一性，否则所有自定义熔断将共用一个配置（用id是因为值短，只要能保证hystrixName不重复就行）
                 config.setHystrixName(RouteConstants.Hystrix.CUSTOM_HYSTRIX_NAME + r.getId());
-                config.setFallbackUri(RouteConstants.Hystrix.CUSTOM_FALLBACK_URI + r.getRouteId());
+                config.setFallbackUri(RouteConstants.Hystrix.CUSTOM_FALLBACK_URI + r.getId());
                 //添加自定义熔断器
                 HystrixObservableCommand.Setter setter = HystrixObservableCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(config.getHystrixName()));
                 setter.andCommandKey(HystrixCommandKey.Factory.asKey(config.getHystrixName()));

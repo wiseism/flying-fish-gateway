@@ -21,7 +21,7 @@ public class CookieFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行cookie过滤 ", route.getRouteId());
+        log.info("处理网关路由请求{},执行cookie过滤 ", route.getId());
         //header,ip,parm,time,cookie
         if (route.getFilterAuthorizeName().contains("cookie")){
             String accessCookie = route.getAccessCookie();

@@ -19,7 +19,7 @@ public class IpFileter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行ip过滤 ", route.getRouteId());
+        log.info("处理网关路由请求{},执行ip过滤 ", route.getId());
         if (route.getFilterAuthorizeName().contains("ip")){
             String ip = NetworkIpUtils.getIpAddress(request);
             if (route.getAccessIp()!=null && route.getAccessIp().contains(ip)){

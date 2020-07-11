@@ -10,6 +10,7 @@ import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.manage.bean.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,9 @@ public class RouteRest extends BaseRest {
     @Resource
     private RouteService routeService;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
     /**
      * 添加网关路由
      * @param routeReq
@@ -42,7 +46,12 @@ public class RouteRest extends BaseRest {
         Route route = toRoute(routeReq);
         route.setCreateTime(new Date());
         this.validate(route);
+        Route dbRoute = new Route();
+        dbRoute.setId(route.getId());
+        long count = routeService.count(dbRoute);
+        Assert.isTrue(count <= 0, "RouteId已存在，不能重复");
         routeService.save(route);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
@@ -52,10 +61,10 @@ public class RouteRest extends BaseRest {
      * @return
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult delete(@RequestParam Long id){
-        Assert.notNull(id, "未获取到对象ID");
-        Assert.isTrue(id>0, "ID值错误");
+    public ApiResult delete(@RequestParam String id){
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         routeService.delete(id);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
@@ -63,17 +72,17 @@ public class RouteRest extends BaseRest {
     public ApiResult update(@RequestBody RouteReq routeReq){
         Assert.notNull(routeReq, "未获取到对象");
         Route route = toRoute(routeReq);
-        Assert.notNull(route.getId(),"未获取到对象ID");
-        Assert.isTrue(route.getId()>0,"ID值错误");
+        Assert.isTrue(StringUtils.isNotBlank(route.getId()), "未获取到对象ID");
         route.setUpdateTime(new Date());
         routeService.update(route);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult findById(@RequestParam Long id){
+    public ApiResult findById(@RequestParam String id){
         Assert.notNull(id, "未获取到对象ID");
-        Assert.isTrue(id>0, "ID值错误");
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         return new ApiResult(routeService.findById(id));
     }
 
@@ -92,26 +101,29 @@ public class RouteRest extends BaseRest {
         if (StringUtils.isBlank(route.getName())){
             route.setName(null);
         }
+        if (StringUtils.isBlank(route.getStatus())){
+            route.setStatus(null);
+        }
         return new ApiResult(routeService.pageList(route,currentPage, pageSize));
     }
 
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult start(@RequestParam Long id){
-        Assert.notNull(id, "未获取到对象ID");
-        Assert.isTrue(id>0, "ID值错误");
+    public ApiResult start(@RequestParam String id){
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Route dbRoute = routeService.findById(id);
         dbRoute.setStatus(Constants.YES);
         routeService.update(dbRoute);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
     @RequestMapping(value = "/stop", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult stop(@RequestParam Long id){
-        Assert.notNull(id, "未获取到对象ID");
-        Assert.isTrue(id>0, "ID值错误");
+    public ApiResult stop(@RequestParam String id){
+        Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         Route dbRoute = routeService.findById(id);
         dbRoute.setStatus(Constants.NO);
         routeService.update(dbRoute);
+        this.setRouteCacheVersion();
         return new ApiResult();
     }
 
@@ -185,6 +197,13 @@ public class RouteRest extends BaseRest {
             route.setFilterAuthorizeName(StringUtils.join(routeAccessList.toArray(), Constants.SEPARATOR_SIGN));
         }
         return route;
+    }
+
+    /**
+     * 对路由数据进行变更后，设置redis中缓存的版本号
+     */
+    private void setRouteCacheVersion(){
+        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.ROUTE, String.valueOf(System.currentTimeMillis()));
     }
 
 }

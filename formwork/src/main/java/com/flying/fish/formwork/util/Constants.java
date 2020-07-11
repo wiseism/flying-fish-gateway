@@ -41,4 +41,17 @@ public class Constants {
      */
     public static final int PAGE_SIZE=10;
 
+    /**
+     * 时间常量
+     */
+    public final static String DAY = "day";
+    public final static String HOUR = "hour";
+    public final static String MIN = "min";
+    /**
+     * 日期格式化常量
+     */
+    public final static String DATE_FORMAT_DAY = "yyyyMMdd";
+    public final static String DATE_FORMAT_HOUR = "HH";
+    public final static String DATE_FORMAT_MIN = "mm";
+
 }

@@ -21,7 +21,7 @@ public class HeaderFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行header过滤 ", route.getRouteId());
+        log.info("处理网关路由请求{},执行header过滤 ", route.getId());
         //header,ip,parameter,time,cookie
         if (route.getFilterAuthorizeName().contains("header")){
             String accessHeader = route.getAccessHeader();

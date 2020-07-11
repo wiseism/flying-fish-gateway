@@ -17,6 +17,7 @@
         <module>dynamic-manage</module>
         <module>eureka-server</module>
         <module>admin-server</module>
+        <module>examples</module>
     </modules>
 
     <parent>

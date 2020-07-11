@@ -104,7 +104,7 @@ public class RegServerService extends BaseService<RegServer,Long,RegServerDao> {
      */
     @Transactional(readOnly = true)
     public PageResult serverPageList(RegServer regServer, int currentPage, int pageSize){
-        String sql = "SELECT s.id AS regServerId,s.status as regServerStatus,DATE_FORMAT(s.createTime,'%Y-%m-%d %H:%i:%s') as regServerTime,r.* FROM Route r, RegServer s WHERE r.routeId = s.routeId and s.clientId=?";
+        String sql = "SELECT s.id AS regServerId,s.status as regServerStatus,DATE_FORMAT(s.createTime,'%Y-%m-%d %H:%i:%s') as regServerTime,r.* FROM Route r, RegServer s WHERE r.id = s.routeId and s.clientId=?";
         return pageNativeQuery(sql, Arrays.asList(regServer.getClientId()), currentPage, pageSize);
     }
 
@@ -130,7 +130,7 @@ public class RegServerService extends BaseService<RegServer,Long,RegServerDao> {
      */
     @Transactional(readOnly = true)
     public PageResult notRegServerPageList(RegServer regServer, int currentPage, int pageSize){
-        String sql = "SELECT r.id,r.routeId,r.name,r.uri,r.path,r.status FROM Route r WHERE r.status='0' AND r.routeId NOT IN (SELECT s.routeId FROM Regserver s WHERE s.clientId=?)";
+        String sql = "SELECT r.id,r.name,r.uri,r.path,r.status FROM Route r WHERE r.status='0' AND r.id NOT IN (SELECT s.routeId FROM Regserver s WHERE s.clientId=?)";
         return pageNativeQuery(sql, Arrays.asList(regServer.getClientId()), currentPage, pageSize);
     }
 

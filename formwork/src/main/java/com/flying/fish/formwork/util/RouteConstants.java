@@ -1,7 +1,7 @@
 package com.flying.fish.formwork.util;
 
 /**
- * @Description
+ * @Description 网关路由常量类
  * @Author jianglong
  * @Date 2020/05/29
  * @Version V1.0
@@ -24,6 +24,22 @@ public class RouteConstants {
     public static final String WEIGHT = "Weight";
     public static final String STRIP_PREFIX = "StripPrefix";
     public static final String ADD_REQUEST_PARAMETER = "AddRequestParameter";
+
+    /**
+     * 负载转发根路径
+     */
+    public static final String PARENT_PATH = "/parent/";
+
+    /**
+     * redis统计缓存key前缀
+     */
+    public final static String COUNT_DAY_KEY = "FISH_GATEWAY_COUNT:DAY:";
+    public final static String COUNT_HOUR_KEY = "FISH_GATEWAY_COUNT:HOUR:";
+    public final static String COUNT_MIN_KEY = "FISH_GATEWAY_COUNT:MIN:";
+    /**
+     * redis同步版本缓存key
+     */
+    public final static String SYNC_VERSION_KEY = "fish_gateway_sync_version";
 
     /**
      * 熔断器

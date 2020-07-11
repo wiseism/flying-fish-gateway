@@ -23,7 +23,7 @@ public class ParameterFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行parameter过滤 ", route.getRouteId());
+        log.info("处理网关路由请求{},执行parameter过滤 ", route.getId());
         //header,ip,parameter,time,cookie
         if (route.getFilterAuthorizeName().contains("parameter")){
             String accessParameter = route.getAccessParameter();

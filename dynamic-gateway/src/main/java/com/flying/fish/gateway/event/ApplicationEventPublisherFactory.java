@@ -38,8 +38,6 @@ public class ApplicationEventPublisherFactory implements ApplicationEventPublish
             this.publisher.publishEvent(new DataClientApplicationEvent(this));
         } else if (StringUtils.equals(type, RouteConstants.ROUTE)) {
             this.publisher.publishEvent(new DataRouteApplicationEvent(this));
-        } else if (StringUtils.equals(type, RouteConstants.BALANCED)) {
-            this.publisher.publishEvent(new DataBalancedApplicationEvent(this));
         } else {
             throw new IllegalArgumentException("发布事件错误，参数格式不正确");
         }

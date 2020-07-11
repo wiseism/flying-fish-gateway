@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  * @Version V1.0
  */
 @Service
-public class BalancedService extends BaseService<Balanced, Long, BalancedDao> {
+public class BalancedService extends BaseService<Balanced, String, BalancedDao> {
 
     @Resource
     private LoadServerService loadServerService;
@@ -26,7 +26,7 @@ public class BalancedService extends BaseService<Balanced, Long, BalancedDao> {
      * @param id
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Throwable.class})
-    public void deleteAndServer(Long id){
+    public void deleteAndServer(String id){
         loadServerService.deleteAllByBalancedId(id);
         this.deleteById(id);
     }

@@ -71,12 +71,9 @@ public class RegServerRest extends BaseRest {
     @RequestMapping(value = "/serverPageList", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult serverPageList(@RequestBody RegServerReq regServerReq) {
         Assert.notNull(regServerReq, "未获取到对象");
+        Assert.isTrue(StringUtils.isNotBlank(regServerReq.getClientId()), "未获取到对象查询ID");
         RegServer regServer = new RegServer();
-        if (StringUtils.isNotBlank(regServerReq.getClientId())){
-            regServer.setClientId(regServerReq.getClientId());
-        }else {
-            throw new IllegalArgumentException("未获取到对象查询ID");
-        }
+        regServer.setClientId(regServerReq.getClientId());
         int currentPage = getCurrentPage(regServerReq.getCurrentPage());
         int pageSize = getPageSize(regServerReq.getPageSize());
         return new ApiResult(regServerService.serverPageList(regServer, currentPage, pageSize));
@@ -85,12 +82,9 @@ public class RegServerRest extends BaseRest {
     @RequestMapping(value = "/clientPageList", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult clientPageList(@RequestBody RegServerReq regServerReq) {
         Assert.notNull(regServerReq, "未获取到对象");
+        Assert.isTrue(StringUtils.isNotBlank(regServerReq.getRouteId()), "未获取到对象查询ID");
         RegServer regServer = new RegServer();
-        if (StringUtils.isNotBlank(regServerReq.getRouteId())){
-            regServer.setRouteId(regServerReq.getRouteId());
-        }else {
-            throw new IllegalArgumentException("未获取到对象查询ID");
-        }
+        regServer.setRouteId(regServerReq.getRouteId());
         int currentPage = getCurrentPage(regServerReq.getCurrentPage());
         int pageSize = getPageSize(regServerReq.getPageSize());
         return new ApiResult(regServerService.clientPageList(regServer, currentPage, pageSize));
@@ -99,12 +93,9 @@ public class RegServerRest extends BaseRest {
     @RequestMapping(value = "/regClientList", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult regClientList(@RequestBody RegServerReq regServerReq) {
         Assert.notNull(regServerReq, "未获取到对象");
+        Assert.isTrue(StringUtils.isNotBlank(regServerReq.getRouteId()), "未获取到对象查询ID");
         RegServer regServer = new RegServer();
-        if (StringUtils.isNotBlank(regServerReq.getRouteId())){
-            regServer.setRouteId(regServerReq.getRouteId());
-        }else {
-            throw new IllegalArgumentException("未获取到对象查询ID");
-        }
+        regServer.setRouteId(regServerReq.getRouteId());
         return new ApiResult(regServerService.regClientList(regServer));
     }
 

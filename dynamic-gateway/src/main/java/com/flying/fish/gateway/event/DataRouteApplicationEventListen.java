@@ -1,8 +1,13 @@
 package com.flying.fish.gateway.event;
 
 import com.flying.fish.formwork.dao.RouteDao;
+import com.flying.fish.formwork.entity.Balanced;
+import com.flying.fish.formwork.entity.LoadServer;
 import com.flying.fish.formwork.entity.Route;
+import com.flying.fish.formwork.service.BalancedService;
+import com.flying.fish.formwork.service.LoadServerService;
 import com.flying.fish.formwork.util.Constants;
+import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.gateway.cache.RouteCache;
 import com.flying.fish.gateway.service.LoadRouteService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +28,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @Description 注册网关路由事件，动态加载数据库网关路由信息，监听路由配置事件，重新动态加载网关路由数据
@@ -37,7 +44,10 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
     private RouteDao routeDao;
     @Resource
     private LoadRouteService loadRouteService;
-
+    @Resource
+    private BalancedService balancedService;
+    @Resource
+    private LoadServerService loadServerService;
     private ApplicationEventPublisher publisher;
     private List<RouteDefinition> routeDefinitions = new ArrayList<>();
 
@@ -54,7 +64,7 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
      */
     @EventListener(classes = DataRouteApplicationEvent.class)
     public void listenEvent() {
-        initLoadRoute();
+        init();
         this.publisher.publishEvent(new RefreshRoutesEvent(this));
     }
 
@@ -79,10 +89,16 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
         return Mono.defer(() -> Mono.error(new NotFoundException("此delete方法不提供功能实现，请勿调用")));
     }
 
+    @PostConstruct
+    public void init(){
+        initLoadRoute();
+        initLoadBalanced();
+    }
+
+
     /**
      * 初始化完毕后，加载路由
      */
-    @PostConstruct
     public void initLoadRoute(){
         Route query = new Route();
         query.setStatus(Constants.YES);
@@ -92,13 +108,65 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
             List<Route> list = routeDao.findAll(Example.of(query));
             if (!CollectionUtils.isEmpty(list)) {
                 list.forEach(r -> {
-                    RouteCache.put(r.getRouteId(), r);
+                    RouteCache.put(r.getId(), r);
                     routeDefinitions.add(loadRouteService.loadRouteDefinition(r));
                 });
             }
             log.info("监听到网关路由配置发生变更，重新加载网关路由配置共{}条", routeDefinitions.size());
         }catch(Exception e){
             log.error("加载数据库中网关路由配置异常：",e);
+        }
+    }
+
+    /**
+     * 初始化完毕后，加载负载路由
+     */
+    public void initLoadBalanced(){
+        Route query = new Route();
+        query.setStatus(Constants.YES);
+        List<Route> balancedRouteList = new ArrayList<>();
+        try {
+            List<Route> list = routeDao.findAll(Example.of(query));
+            List<Balanced> balancedList = balancedService.findAll(new Balanced());
+            //先将所有负载路由清空
+            routeDefinitions.removeIf(route -> route.getId().startsWith(RouteConstants.BALANCED));
+            if (!CollectionUtils.isEmpty(balancedList)){
+                List<LoadServer> loadServerList = loadServerService.findAll(new LoadServer());
+                balancedList.forEach(b->{
+                    if (b.getStatus().equals(Constants.YES)){
+                        //查找负载下注册的服务
+                        List<LoadServer> serverList = loadServerList.stream().filter(l-> l.getBalancedId().equals(b.getId())).collect(Collectors.toList());
+                        if (!CollectionUtils.isEmpty(serverList)) {
+                            serverList.forEach(s -> {
+                                //查找服务对应的路由服务
+                                Optional<Route> optionalRoute = list.stream().filter(r -> r.getId().equals(s.getRouteId())).findFirst();
+                                if (optionalRoute.isPresent()) {
+                                    String weightName = RouteConstants.BALANCED + "-" + b.getId();
+                                    Route route = optionalRoute.get();
+                                    //获取route，改变参数，构造一个新route对象
+                                    route.setId(RouteConstants.BALANCED + "-" + route.getId());
+                                    route.setPath(RouteConstants.PARENT_PATH + b.getLoadUri());
+                                    //设置负载参数
+                                    route.setWeightName(weightName);
+                                    route.setWeight(s.getWeight());
+                                    route.setStripPrefix(1);
+                                    //添加新路由集合中
+                                    balancedRouteList.add(route);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            //将新的路由加载网关路由集合中
+            balancedRouteList.forEach(r->{
+                RouteCache.put(r.getId(), r);
+                //添加新的路由对象
+                routeDefinitions.add(loadRouteService.loadRouteDefinition(r));
+            });
+            log.info("监听到网关负载路由配置发生变更，重新加载网关负载路由配置共{}条", balancedRouteList.size());
+        }catch(Exception e){
+            log.error("加载数据库中网关负载路由配置异常：",e);
         }
     }
 

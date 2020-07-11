@@ -1,6 +1,7 @@
 package com.flying.fish.gateway.filter;
 
 import com.flying.fish.formwork.util.NetworkIpUtils;
+import com.flying.fish.gateway.cache.CountCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -65,11 +66,18 @@ public class LogGlobalFilter implements GlobalFilter, Ordered {
             //创建自定义请求监控日志
             //114.67.85.24 - - [03/Dec/2019:23:53:06 +0800] "GET /index.php HTTP/1.1" 200 0 114.67.101.85 "http://114.67.101.85:80/index.php" "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)" "0.000"
             log.trace("{} {} {} [{}] \"{} {} HTTP/1.1\" {} {} {} \"{}\" \"{}\" \"{}\" {}", remoteAddr, userInfo, routeId, requestTime, method, path, host, status, length, uriStr, userAgent, contentType, useOfTime);
+            //增加统计
+            count(routeId);
         });
     }
 
     @Override
     public int getOrder() {
         return 0;
+    }
+
+    public void count(String routeId){
+        Integer count = CountCache.get(routeId);
+        CountCache.put(routeId, count == null ? 0 : count.intValue() + 1);
     }
 }

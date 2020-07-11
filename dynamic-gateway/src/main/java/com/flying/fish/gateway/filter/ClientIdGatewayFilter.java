@@ -51,10 +51,9 @@ public class ClientIdGatewayFilter implements GatewayFilter, Ordered {
      * @return
      */
     public String getClientId(ServerHttpRequest request){
-        HttpHeaders headers = request.getHeaders();
         String clientId = request.getQueryParams().getFirst(RouteConstants.CLIENT_ID);
         if (StringUtils.isBlank(clientId)){
-            clientId = headers.getFirst(RouteConstants.CLIENT_ID);
+            clientId = request.getHeaders().getFirst(RouteConstants.CLIENT_ID);
         }
         return clientId;
     }
