@@ -5,8 +5,10 @@ import com.flying.fish.formwork.entity.RegServer;
 import com.flying.fish.formwork.service.RegServerService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
+import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.manage.bean.RegServerReq;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,9 @@ public class RegServerRest extends BaseRest {
     @Resource
     private RegServerService regServerService;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
     public ApiResult add(@RequestBody RegServer regServer) {
         Assert.notNull(regServer, "未获取到对象");
@@ -41,6 +46,7 @@ public class RegServerRest extends BaseRest {
         Assert.isTrue(count <= 0, "客户端已注册该服务，请不要重复注册");
         //保存
         regServerService.save(regServer);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -49,6 +55,7 @@ public class RegServerRest extends BaseRest {
         Assert.notNull(id, "未获取到对象ID");
         Assert.isTrue(id>0, "ID值错误");
         regServerService.deleteById(id);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -58,6 +65,7 @@ public class RegServerRest extends BaseRest {
         regServer.setUpdateTime(new Date());
         this.validate(regServer);
         regServerService.update(regServer);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -107,6 +115,7 @@ public class RegServerRest extends BaseRest {
         dbRegServer.setStatus(Constants.YES);
         dbRegServer.setUpdateTime(new Date());
         regServerService.update(dbRegServer);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -118,6 +127,7 @@ public class RegServerRest extends BaseRest {
         dbRegServer.setStatus(Constants.NO);
         dbRegServer.setUpdateTime(new Date());
         regServerService.update(dbRegServer);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -125,6 +135,7 @@ public class RegServerRest extends BaseRest {
     public ApiResult stopClientAllRoute(@RequestParam String clientId) {
         Assert.isTrue(StringUtils.isNotBlank(clientId), "未获取到对象ID");
         regServerService.stopClientAllRoute(clientId);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -132,6 +143,7 @@ public class RegServerRest extends BaseRest {
     public ApiResult startClientAllRoute(@RequestParam String clientId) {
         Assert.isTrue(StringUtils.isNotBlank(clientId), "未获取到对象ID");
         regServerService.startClientAllRoute(clientId);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -140,6 +152,7 @@ public class RegServerRest extends BaseRest {
     public ApiResult stopRouteAllClient(@RequestParam String routeId) {
         Assert.isTrue(StringUtils.isNotBlank(routeId), "未获取到对象ID");
         regServerService.stopRouteAllClient(routeId);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -147,6 +160,7 @@ public class RegServerRest extends BaseRest {
     public ApiResult startRouteAllClient(@RequestParam String routeId) {
         Assert.isTrue(StringUtils.isNotBlank(routeId), "未获取到对象ID");
         regServerService.startRouteAllClient(routeId);
+        this.setClientCacheVersion();
         return new ApiResult();
     }
 
@@ -166,6 +180,13 @@ public class RegServerRest extends BaseRest {
         int currentPage = getCurrentPage(regServerReq.getCurrentPage());
         int pageSize = getPageSize(regServerReq.getPageSize());
         return new ApiResult(regServerService.notRegClientPageList(regServerReq, currentPage, pageSize));
+    }
+
+    /**
+     * 对客户端数据进行变更后，设置redis中缓存的版本号
+     */
+    private void setClientCacheVersion(){
+        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.CLIENT_ID, String.valueOf(System.currentTimeMillis()));
     }
 
 }
