@@ -10,7 +10,8 @@ eureka:
   client:
     serviceUrl:
       # 默认注册中心地址，如果为集群，请指向另一个注册中心，使用域名作为访问路径，如有多个节点，使用逗号','分隔
-      defaultZone: http://127.0.0.1:8761/eureka/,http://192.168.110.35:8761/eureka/,http://192.168.110.36:8761/eureka/
+      # defaultZone: http://127.0.0.1:8761/eureka/,http://192.168.110.35:8761/eureka/,http://192.168.110.36:8761/eureka/
+      defaultZone: http://127.0.0.1:8761/eureka/
   instance:
     # 注册到eureka的主机名称
     hostname: 192.168.11.45
