@@ -48,7 +48,7 @@ public class IpGatewayFilter implements GatewayFilter, Ordered {
      */
     private boolean isPassIp(String ip){
         Object object = IpListCache.get(ip);
-        return object != null && (boolean) IpListCache.get(ip);
+        return object != null && (boolean) object;
     }
 
     /**

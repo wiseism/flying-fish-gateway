@@ -41,26 +41,49 @@ public class Route implements java.io.Serializable {
     @Size(min = 2, max = 40, message = "网关路由断言Path长度必需在2到100个字符内")
     @Column(name = "path")
     private String path;
+    /**
+     * 请求类型：POST，GET，DELETE，PUT
+     */
     @Column(name = "method")
     private String method;
-    //ip,token,id
+    /**
+     * 鉴权过滤器类型：ip,token,id
+     */
     @Column(name = "filterGatewaName")
     private String filterGatewaName;
-    //hystrix,custom
+    /**
+     * 熔断器名称：hystrix,custom
+     */
     @Column(name = "filterHystrixName")
     private String filterHystrixName;
-    //ip,uri,requestId
+    /**
+     * 限流器类型：ip,uri,requestId
+     */
     @Column(name = "filterRateLimiterName")
     private String filterRateLimiterName;
-    //header,ip,param,time,cookie
+    /**
+     * 过滤器类型：header,ip,param,time,cookie
+     */
     @Column(name = "filterAuthorizeName")
     private String filterAuthorizeName;
+    /**
+     * 回滚消息
+     */
     @Column(name = "fallbackMsg")
     private String fallbackMsg;
+    /**
+     * 回滚超时时长
+     */
     @Column(name = "fallbackTimeout")
     private Long fallbackTimeout;
+    /**
+     * 每1秒限制请求数(令牌数)
+     */
     @Column(name = "replenishRate")
     private Integer replenishRate;
+    /**
+     * 令牌桶的容量
+     */
     @Column(name = "burstCapacity")
     private Integer burstCapacity;
     @Transient
@@ -72,18 +95,39 @@ public class Route implements java.io.Serializable {
      */
     @Column(name = "status")
     private String status;
+    /**
+     * 断言前缀截取层数
+     */
     @Column(name = "stripPrefix")
     private Integer stripPrefix;
+    /**
+     * 请求参数
+     */
     @Column(name = "requestParameter")
     private String requestParameter;
+    /**
+     * 鉴权：Header
+     */
     @Column(name = "accessHeader")
     private String accessHeader;
+    /**
+     * 鉴权：Header
+     */
     @Column(name = "accessIp")
     private String accessIp;
+    /**
+     * 鉴权：Parameter
+     */
     @Column(name = "accessParameter")
     private String accessParameter;
+    /**
+     * 鉴权：Time
+     */
     @Column(name = "accessTime")
     private String accessTime;
+    /**
+     * 鉴权：Cookie
+     */
     @Column(name = "accessCookie")
     private String accessCookie;
     /**

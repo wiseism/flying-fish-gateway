@@ -28,11 +28,11 @@ spring:
         # 路径断言匹配
         - Path=/limiter/client/**
         filters:
-        - SecureClientId=true
-        - SecureIp=true
-        - SecureToken=true
+        - SecureClientId=false
+        - SecureIp=false
+        - SecureToken=false
         # true则开启认证，false则不开启；指向AuthorizeGatewayFilterFactory
-        - Authorize=true
+        - Authorize=false
         # StripPrefix=1表示过滤Path第一段（截取/test）
         - StripPrefix=1
         # 在转发url后加参数version=test1
@@ -44,8 +44,8 @@ spring:
             name: fallbackcmd
             # 触发熔断的回调路径，需加前缀forward:
             fallbackUri: forward:/fallback?routeId=1
-        # 添加限流机器，基于令牌桶算法，当服务超出限流约束，则直接拒决请求
-        - name: RequestRateLimiter
+        # 添加限流机器，基于令牌桶算法，当服务超出限流约束，则直接拒决请求:RequestRateLimiter(默认),CustomRequestRateLimiter(自定义)
+        - name: CustomRequestRateLimiter
           args:
             # 用于限流的键的解析器的 Bean 对象的名字
             key-resolver: '#{@uriKeyResolver}'

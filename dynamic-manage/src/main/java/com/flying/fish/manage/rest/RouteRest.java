@@ -168,8 +168,9 @@ public class RouteRest extends BaseRest {
         }
         //添加限流器
         if (limiter != null) {
+            route.setFilterRateLimiterName(null);
             if (limiter.getIdChecked()) {
-                route.setFilterRateLimiterName(RouteConstants.ID);
+                route.setFilterRateLimiterName(RouteConstants.REQUEST_ID);
             }else if (limiter.getIpChecked()) {
                 route.setFilterRateLimiterName(RouteConstants.IP);
             }else if (limiter.getUriChecked()) {
