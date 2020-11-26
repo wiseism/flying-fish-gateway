@@ -5,7 +5,7 @@ import org.springframework.util.Assert;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @Description
+ * @Description 缓存客户端注册IP信息
  * @Author jianglong
  * @Date 2020/05/28
  * @Version V1.0

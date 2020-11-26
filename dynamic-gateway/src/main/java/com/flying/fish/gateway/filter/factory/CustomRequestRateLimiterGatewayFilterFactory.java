@@ -29,7 +29,7 @@ public class CustomRequestRateLimiterGatewayFilterFactory extends AbstractGatewa
     private final RateLimiter defaultRateLimiter;
     private final KeyResolver defaultKeyResolver;
 
-    public CustomRequestRateLimiterGatewayFilterFactory(RateLimiter defaultRateLimiter, @Qualifier("requestIdKeyResolver") KeyResolver defaultKeyResolver) {
+    public CustomRequestRateLimiterGatewayFilterFactory(RateLimiter defaultRateLimiter, @Qualifier("hostAddrKeyResolver") KeyResolver defaultKeyResolver) {
         super(Config.class);
         this.defaultRateLimiter = defaultRateLimiter;
         this.defaultKeyResolver = defaultKeyResolver;
@@ -59,7 +59,8 @@ public class CustomRequestRateLimiterGatewayFilterFactory extends AbstractGatewa
                         if (response.isAllowed()) {
                             return chain.filter(exchange);
                         }
-                        log.error("网关转发客户端，执行验证异常：访问已限流，请稍候再请求");
+
+                        log.error("网关转发客户端ID:[{}],请求地址：[{}]，执行验证异常：访问已限流，请稍候再请求", route.getId(), route.getUri().getPath());
                         return HttpResponseUtils.write(exchange.getResponse(), config.getStatusCode(), "网关转发客户端，执行验证异常：访问已限流，请稍候再请求");
                         //return httpResponse.setComplete();
                     }));

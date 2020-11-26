@@ -5,7 +5,7 @@ import org.springframework.util.Assert;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @Description
+ * @Description 缓存接口请求统计缓存
  * @Author jianglong
  * @Date 2020/07/07
  * @Version V1.0

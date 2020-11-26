@@ -16,9 +16,15 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`gateway` /*!40100 DEFAULT CHARACTER SET
 
 USE `gateway`;
 
-/*Table structure for table `balanced` */
+/*Table structure for table `apidoc` */
 
-DROP TABLE IF EXISTS `balanced`;
+CREATE TABLE `apidoc` (
+  `id` varchar(40) NOT NULL COMMENT '主键，同route_id',
+  `content` text COMMENT '内容',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `balanced` */
 
 CREATE TABLE `balanced` (
   `id` varchar(40) NOT NULL COMMENT '主键',
@@ -34,8 +40,6 @@ CREATE TABLE `balanced` (
 
 /*Table structure for table `client` */
 
-DROP TABLE IF EXISTS `client`;
-
 CREATE TABLE `client` (
   `id` varchar(40) NOT NULL COMMENT '主键,注册key',
   `name` varchar(40) NOT NULL COMMENT '客户端名称',
@@ -50,8 +54,6 @@ CREATE TABLE `client` (
 
 /*Table structure for table `loadserver` */
 
-DROP TABLE IF EXISTS `loadserver`;
-
 CREATE TABLE `loadserver` (
   `id` bigint(8) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `routeId` varchar(40) NOT NULL COMMENT '路由ID',
@@ -65,8 +67,6 @@ CREATE TABLE `loadserver` (
 
 /*Table structure for table `regserver` */
 
-DROP TABLE IF EXISTS `regserver`;
-
 CREATE TABLE `regserver` (
   `id` bigint(8) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `clientId` varchar(40) NOT NULL COMMENT '客户端ID',
@@ -78,8 +78,6 @@ CREATE TABLE `regserver` (
 ) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `route` */
-
-DROP TABLE IF EXISTS `route`;
 
 CREATE TABLE `route` (
   `id` varchar(40) NOT NULL COMMENT '主键',
@@ -96,6 +94,7 @@ CREATE TABLE `route` (
   `fallbackTimeout` bigint(8) DEFAULT NULL COMMENT '熔断超时设置',
   `replenishRate` int(6) DEFAULT NULL COMMENT '每秒流量',
   `burstCapacity` int(6) DEFAULT NULL COMMENT '令牌总量',
+  `weight` int(6) DEFAULT NULL COMMENT '权重值',
   `status` varchar(2) DEFAULT NULL COMMENT '状态',
   `stripPrefix` tinyint(1) DEFAULT NULL COMMENT '断言截取',
   `requestParameter` varchar(200) DEFAULT NULL COMMENT '请求参数',
@@ -110,8 +109,6 @@ CREATE TABLE `route` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `secureip` */
-
-DROP TABLE IF EXISTS `secureip`;
 
 CREATE TABLE `secureip` (
   `ip` varchar(16) NOT NULL COMMENT 'IP主键',
