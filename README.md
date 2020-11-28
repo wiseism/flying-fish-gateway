@@ -57,6 +57,19 @@
 1. 本项目采用前后端分离，此git仓库为纯后台模块
 2. 点击此链接下载，前端控制台管理项目 **[flying-fish-manage](https://gitee.com/omsgit/flying-fish-manage)** 
 
+#### 前端界面
+![负载管理](https://oscimg.oschina.net/oscnet/up-69a24d02ef07aa936fb08d975094fc091f9.png "负载管理")
+(负载管理)
+![服务详情](https://oscimg.oschina.net/oscnet/up-59965a0a5c4a81408c39ed05e455d1cd92e.png "服务详情")
+（服务详情）
+![注册服务](https://oscimg.oschina.net/oscnet/up-a6bf4b28a70bebfad8a64ec06ca3048f7ab.png "注册服务")
+（注册服务）
+![创建网关服务](https://oscimg.oschina.net/oscnet/up-87c5da8c27e917e913569c22089b65e989c.png "创建网关服务")
+（创建网关服务）
+![IP名单](https://oscimg.oschina.net/oscnet/up-4f65dc499db0ac4031b94f86e8d4c93737f.png "IP名单")
+（IP名单）
+
+[参见个人说明文章](https://my.oschina.net/u/437309?tab=newest&catalogId=7056744)
 
 #### 参与贡献
 
