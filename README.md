@@ -16,9 +16,9 @@
 
 #### 流程图
 ![网络拓扑图](https://oscimg.oschina.net/oscnet/up-eb3ae5a6e7c95e3f28ac4bc666e6455ea9a.png "网络拓扑")
-
+（网络拓扑）
 ![执行流程图](https://oscimg.oschina.net/oscnet/up-060f6ce5895acaad0bb35dafca4c76ecf1e.png "执行流程")
-
+（执行流程）
 1.  前置nginx用于负载均衡，将请求代理分发到不同网关；
 2.  gateway网关路由对请求进行鉴权、限流、熔断、日志等；
 3.  gateway网关路由对注册服务进行管理与路由转发；
@@ -68,8 +68,22 @@
 （创建网关服务）
 ![IP名单](https://oscimg.oschina.net/oscnet/up-4f65dc499db0ac4031b94f86e8d4c93737f.png "IP名单")
 （IP名单）
+![接口文档](https://oscimg.oschina.net/oscnet/up-a5fad9cf38978d22150fb633e367583d720.png "接口文档")
 
 [参见个人说明文章](https://my.oschina.net/u/437309?tab=newest&catalogId=7056744)
+
+#### 更新记录
+
+ **snapshot.v.1.0** 
+1.代码优化，已知问题题修复
+2.扩展功能：接口文档，提供API接口文档描述功能
+3.添加限流拦截之后的通用规范json格式输出
+
+ **master** 
+1. 初始版本
+2. 建立基础功能：负载管理、服务管理、客户端管理、IP名单管理
+3. 其它底层开发
+
 
 #### 参与贡献
 
