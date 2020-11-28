@@ -14,6 +14,14 @@
 4.  支持可动态配置IP、URL、REQUESTID等基于令牌桶算法自定义限流器，实现业务峰值固化，避免雪崩效应
 4.  支持可动态配置HEADER、IP、请求参数、时间、Cookie等鉴权验证，加强业务访问安全，避免或减少每个业务服务重复实现安全鉴权规则
 
+#### 流程图
+![网络拓扑图](https://oscimg.oschina.net/oscnet/up-eb3ae5a6e7c95e3f28ac4bc666e6455ea9a.png "网络拓扑")
+
+![执行流程图](https://oscimg.oschina.net/oscnet/up-060f6ce5895acaad0bb35dafca4c76ecf1e.png "执行流程")
+
+1.  前置nginx用于负载均衡，将请求代理分发到不同网关；
+2.  gateway网关路由对请求进行鉴权、限流、熔断、日志等；
+3.  gateway网关路由对注册服务进行管理与路由转发；
 
 #### 软件架构
 
