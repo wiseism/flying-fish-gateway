@@ -69,6 +69,9 @@
 ![IP名单](https://oscimg.oschina.net/oscnet/up-4f65dc499db0ac4031b94f86e8d4c93737f.png "IP名单")
 （IP名单）
 ![接口文档](https://oscimg.oschina.net/oscnet/up-a5fad9cf38978d22150fb633e367583d720.png "接口文档")
+（接口文档）
+![接口统计](https://oscimg.oschina.net/oscnet/up-9f14af581c8273953b2016ad2d22dfb3384.png "接口统计")
+（接口统计）
 
 [参见个人说明文章](https://my.oschina.net/u/437309?tab=newest&catalogId=7056744)
 
