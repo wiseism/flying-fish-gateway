@@ -1,4 +1,4 @@
-package com.flying.fish.manage.bean;
+package com.flying.fish.formwork.bean;
 
 import lombok.Data;
 
@@ -15,6 +15,7 @@ public class CountRsp implements java.io.Serializable {
 
     private List<String> dates;
     private List<CountData> datas;
+    private List<Integer> counts;
 
     @Data
     public static class CountData{

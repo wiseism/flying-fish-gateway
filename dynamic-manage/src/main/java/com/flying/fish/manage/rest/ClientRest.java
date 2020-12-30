@@ -6,7 +6,7 @@ import com.flying.fish.formwork.service.ClientService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.manage.bean.ClientReq;
+import com.flying.fish.formwork.bean.ClientReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -91,11 +91,6 @@ public class ClientRest extends BaseRest {
      */
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult findById(@RequestParam String id) {
-        try{
-            Thread.sleep(5 * 1000);
-        }catch(Exception e){
-
-        }
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         return new ApiResult(clientService.findById(id));
     }

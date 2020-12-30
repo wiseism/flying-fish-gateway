@@ -2,19 +2,13 @@ package com.flying.fish.formwork.service;
 
 import com.flying.fish.formwork.base.BaseService;
 import com.flying.fish.formwork.dao.RegServerDao;
-import com.flying.fish.formwork.dao.RouteDao;
 import com.flying.fish.formwork.entity.RegServer;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.PageResult;
-import org.hibernate.query.internal.NativeQueryImpl;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

@@ -34,8 +34,13 @@ public class IpGatewayFilter implements GatewayFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String ip = NetworkIpUtils.getIpAddress(request);
-        if (!this.isPassIp(ip) || !this.regPassIp(routeId, ip)){
-            String msg = "客户端IP无权限访问网关路由："+ routeId +"! Ip:" + ip;
+        if (!this.isPassIp(ip)){
+            String msg = "此IP已被限制，无权限访问网关!" +" ip:" + ip;
+            log.error(msg);
+            return HttpResponseUtils.writeUnauth(exchange.getResponse(), msg);
+        }
+        if (!this.regPassIp(routeId, ip)){
+            String msg = "客户端IP无权限访问网关路由："+ routeId +"! ip:" + ip;
             log.error(msg);
             return HttpResponseUtils.writeUnauth(exchange.getResponse(), msg);
         }
@@ -48,7 +53,11 @@ public class IpGatewayFilter implements GatewayFilter, Ordered {
      */
     private boolean isPassIp(String ip){
         Object object = IpListCache.get(ip);
-        return object != null && (boolean) object;
+        //如果没有设置IP白名单，则不做限制
+        if (object == null){
+            return true;
+        }
+        return (boolean) object;
     }
 
     /**

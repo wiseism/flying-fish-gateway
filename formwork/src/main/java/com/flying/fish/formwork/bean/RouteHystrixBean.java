@@ -1,4 +1,4 @@
-package com.flying.fish.manage.bean;
+package com.flying.fish.formwork.bean;
 
 import lombok.Data;
 

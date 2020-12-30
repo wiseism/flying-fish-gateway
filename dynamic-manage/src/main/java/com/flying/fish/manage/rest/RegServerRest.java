@@ -6,7 +6,7 @@ import com.flying.fish.formwork.service.RegServerService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.manage.bean.RegServerReq;
+import com.flying.fish.formwork.bean.RegServerReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;

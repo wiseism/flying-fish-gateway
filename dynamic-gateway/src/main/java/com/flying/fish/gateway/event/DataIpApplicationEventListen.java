@@ -5,10 +5,6 @@ import com.flying.fish.formwork.service.SecureIpService;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.gateway.cache.IpListCache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -44,7 +40,7 @@ public class DataIpApplicationEventListen{
     @PostConstruct
     public void initLoadSecureIp(){
         SecureIp secureIp = new SecureIp();
-        secureIp.setStatus(Constants.YES);
+//        secureIp.setStatus(Constants.YES);
         List<SecureIp> list = secureIpService.findAll(secureIp);
         IpListCache.clear();
         int size = 0;

@@ -1,14 +1,12 @@
 package com.flying.fish.formwork.dao;
 
 import com.flying.fish.formwork.entity.RegServer;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description 注册网关服务Dao数据层操作接口

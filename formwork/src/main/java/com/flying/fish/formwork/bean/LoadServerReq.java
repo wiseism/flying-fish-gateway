@@ -1,7 +1,8 @@
-package com.flying.fish.manage.bean;
+package com.flying.fish.formwork.bean;
 
 import com.flying.fish.formwork.entity.LoadServer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @Description
@@ -10,6 +11,7 @@ import lombok.Data;
  * @Version V1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class LoadServerReq extends LoadServer implements java.io.Serializable {
     private Integer currentPage;
     private Integer pageSize;

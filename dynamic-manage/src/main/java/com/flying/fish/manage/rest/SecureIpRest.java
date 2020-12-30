@@ -4,9 +4,8 @@ import com.flying.fish.formwork.base.BaseRest;
 import com.flying.fish.formwork.entity.SecureIp;
 import com.flying.fish.formwork.service.SecureIpService;
 import com.flying.fish.formwork.util.ApiResult;
-import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.manage.bean.SecureIpReq;
+import com.flying.fish.formwork.bean.SecureIpReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
@@ -116,7 +115,7 @@ public class SecureIpRest extends BaseRest {
      * 对IP数据进行变更后，设置redis中缓存的版本号
      */
     private void setIpCacheVersion(){
-        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.CLIENT_ID, String.valueOf(System.currentTimeMillis()));
+        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.IP, String.valueOf(System.currentTimeMillis()));
     }
 
 }

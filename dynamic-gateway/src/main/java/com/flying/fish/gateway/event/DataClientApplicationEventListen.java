@@ -1,12 +1,9 @@
 package com.flying.fish.gateway.event;
 
-import com.flying.fish.formwork.service.ClientService;
 import com.flying.fish.formwork.service.RegServerService;
 import com.flying.fish.gateway.cache.ClientIdCache;
 import com.flying.fish.gateway.cache.RegIpListCache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

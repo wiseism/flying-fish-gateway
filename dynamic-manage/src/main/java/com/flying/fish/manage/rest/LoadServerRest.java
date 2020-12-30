@@ -1,12 +1,9 @@
 package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
-import com.flying.fish.formwork.entity.Balanced;
-import com.flying.fish.formwork.entity.LoadServer;
 import com.flying.fish.formwork.service.LoadServerService;
 import com.flying.fish.formwork.util.ApiResult;
-import com.flying.fish.manage.bean.BalancedReq;
-import com.flying.fish.manage.bean.LoadServerReq;
+import com.flying.fish.formwork.bean.LoadServerReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;

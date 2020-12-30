@@ -1,4 +1,4 @@
-package com.flying.fish.manage.bean;
+package com.flying.fish.formwork.bean;
 
 import com.flying.fish.formwork.entity.Balanced;
 import com.flying.fish.formwork.entity.LoadServer;
@@ -9,12 +9,11 @@ import java.util.List;
 /**
  * @Description
  * @Author jianglong
- * @Date 2020/06/28
+ * @Date 2020/06/30
  * @Version V1.0
  */
 @Data
-public class BalancedReq extends Balanced implements java.io.Serializable {
-    private Integer currentPage;
-    private Integer pageSize;
+public class BalancedRsp implements java.io.Serializable {
+    private Balanced balanced;
     private List<LoadServer> serverList;
 }

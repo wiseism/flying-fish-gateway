@@ -2,15 +2,10 @@ package com.flying.fish.gateway.config;
 
 
 import com.flying.fish.formwork.config.ApplicationContextProvider;
-import com.flying.fish.formwork.dao.RegServerDao;
 import com.flying.fish.formwork.dao.RouteDao;
 import com.flying.fish.formwork.entity.Route;
 import com.flying.fish.formwork.util.Constants;
-import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.gateway.cache.RouteCache;
-import com.flying.fish.gateway.event.DataClientApplicationEvent;
-import com.flying.fish.gateway.event.DataIpApplicationEvent;
-import com.flying.fish.gateway.event.DataRouteApplicationEvent;
 import com.flying.fish.gateway.filter.ClientIdGatewayFilter;
 import com.flying.fish.gateway.filter.IpGatewayFilter;
 import com.flying.fish.gateway.filter.TokenGatewayFilter;
@@ -27,19 +22,13 @@ import org.springframework.cloud.gateway.route.builder.BooleanSpec;
 import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.gateway.route.builder.UriSpec;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Example;
-import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
