@@ -78,6 +78,6 @@ public class LogGlobalFilter implements GlobalFilter, Ordered {
 
     public void count(String routeId){
         Integer count = CountCache.get(routeId);
-        CountCache.put(routeId, count == null ? 0 : count.intValue() + 1);
+        CountCache.put(routeId, count == null ? 1 : count.intValue() + 1);
     }
 }

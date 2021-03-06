@@ -53,7 +53,7 @@ public class TimerCountService {
 
         //保存按小时统计的数据
         String hourKey = RouteConstants.COUNT_HOUR_KEY + DateFormatUtils.format(new Date(), Constants.DATE_FORMAT_HOUR);
-        //清除，防止历史缓存数据
+        //清除下一个小时的历史结果，防止历史缓存数据叠加
         if (!hourTag.equals(hourKey)) {
             redisTemplate.delete(hourKey);
         }

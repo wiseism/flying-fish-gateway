@@ -24,6 +24,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.gateway.route.builder.UriSpec;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Example;
 import reactor.core.publisher.Mono;
 
@@ -175,6 +176,7 @@ public class RouteConfig {
      *
      * @return
      */
+    @Primary
     @Bean("hostAddrKeyResolver")
     public KeyResolver hostAddrKeyResolver() {
         return exchange -> Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
