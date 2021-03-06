@@ -44,7 +44,7 @@
 
 #### 安装教程
 
-1.  依赖spring-boot 2.0.3.RELEASE、spring-cloud Finchley.RELEASE版本，注意版本的搭配
+1.  依赖spring-boot 2.0.3.RELEASE、spring-cloud Finchley.SR4版本，注意版本的搭配
 2.  需安装eureke、consul等其中任意一种，也可无需注册中心运行
 3.  详细安装文档：**[doc/flying-fish-gateway-说明文档.docx](https://gitee.com/omsgit/flying-fish-gateway/tree/snapshot.v.1.0/doc)** 
 
