@@ -14,9 +14,9 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka/
   instance:
     # 注册到eureka的主机名称
-    hostname: 192.168.11.45
+    hostname: 192.168.110.35
     # 注册到eureka的主机IP
-    ipAddress: 192.168.11.45
+    ipAddress: 192.168.110.35
     # 优先使用IP名注册
     prefer-ip-address: true
 
