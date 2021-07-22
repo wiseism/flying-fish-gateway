@@ -11,6 +11,8 @@ import com.netflix.hystrix.HystrixObservableCommand;
 import com.netflix.hystrix.HystrixObservableCommand.Setter;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -55,19 +57,26 @@ public class CustomHystrixGatewayFilterFactory extends AbstractGatewayFilterFact
 
     public static final String FALLBACK_URI = "fallbackUri";
 
-    private final DispatcherHandler dispatcherHandler;
+    @Autowired
+    private DispatcherHandler dispatcherHandler;
 
-    public CustomHystrixGatewayFilterFactory(DispatcherHandler dispatcherHandler) {
+    public CustomHystrixGatewayFilterFactory() {
         super(Config.class);
-        this.dispatcherHandler = dispatcherHandler;
         log.info("Loaded GatewayFilterFactory [CustomHystrix]");
     }
+
+//    public CustomHystrixGatewayFilterFactory(DispatcherHandler dispatcherHandler) {
+//        super(Config.class);
+//        this.dispatcherHandler = dispatcherHandler;
+//        log.info("Loaded GatewayFilterFactory [CustomHystrix]");
+//    }
 
     @Override
     public List<String> shortcutFieldOrder() {
         return Arrays.asList(NAME_KEY);
     }
 
+    @Override
     public GatewayFilter apply(String routeId, Consumer<Config> consumer) {
         Config config = newConfig();
         consumer.accept(config);

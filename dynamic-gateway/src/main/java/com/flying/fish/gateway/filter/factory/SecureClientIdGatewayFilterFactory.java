@@ -28,6 +28,7 @@ public class SecureClientIdGatewayFilterFactory extends AbstractGatewayFilterFac
      filters:
      # 关键在下面一句，值为true则开启认证，false则不开启
      # 这种配置方式和spring cloud gateway内置的GatewayFilterFactory一致
+     # 注意SecureClientId对应SecureClientIdGatewayFilterFactory，GatewayFilterFactory为默认固定后缀,gateway只匹配前缀
      - SecureClientId=true
      */
 

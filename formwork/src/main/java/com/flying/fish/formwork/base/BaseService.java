@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Description 父业务类，提供基础数据库操作方法
@@ -89,8 +87,8 @@ public class BaseService<T,ID,DAO extends JpaRepository> {
         return list(t, DEFAULT_SORT_FIELD);
     }
 
-    public List<T> list(T t, String ... properties){
-        return dao.findAll(Example.of(t,ExampleMatcher.matching()),new Sort(Sort.Direction.ASC,properties));
+    public List list(T t, String ... properties){
+        return dao.findAll(Example.of(t,ExampleMatcher.matching()),Sort.by(Sort.Direction.ASC, properties));
     }
 
     public PageResult<T> pageList(T t, int currentPage, int pageSize){
@@ -98,8 +96,7 @@ public class BaseService<T,ID,DAO extends JpaRepository> {
     }
 
     public PageResult<T> pageList(T t, int currentPage, int pageSize, String ... properties){
-        Sort sort = new Sort(Sort.Direction.DESC, properties);
-        Pageable pageable = PageRequest.of(currentPage-1,pageSize, sort);
+        Pageable pageable = PageRequest.of(currentPage-1,pageSize, Sort.by(Sort.Direction.DESC, properties));
         Page<T> pageData  =  dao.findAll(Example.of(t), pageable);
         return this.setPageResult(pageData.getContent(), currentPage, pageSize, pageData.getTotalElements());
     }

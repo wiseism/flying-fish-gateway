@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v12.09 (64 bit)
-MySQL - 5.7.25-log : Database - gateway
+MySQL - 5.7.25-log : Database - gateway2
 *********************************************************************
 */
 
@@ -12,9 +12,9 @@ MySQL - 5.7.25-log : Database - gateway
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`gateway` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`gateway2` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
-USE `gateway`;
+USE `gateway2`;
 
 /*Table structure for table `apidoc` */
 
@@ -63,7 +63,22 @@ CREATE TABLE `loadserver` (
   `updateTime` datetime DEFAULT NULL COMMENT '更新时间',
   `remarks` varchar(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `monitor` */
+
+CREATE TABLE `monitor` (
+  `id` varchar(40) NOT NULL COMMENT '主键，同routeId',
+  `status` char(2) DEFAULT NULL COMMENT '0启用，1禁用，2告警',
+  `emails` varchar(200) DEFAULT NULL COMMENT '通知接收邮箱',
+  `topic` varchar(200) DEFAULT NULL COMMENT '告警邮件主题',
+  `recover` char(2) DEFAULT NULL COMMENT '告警重试，0开启，1禁用',
+  `frequency` char(4) DEFAULT NULL COMMENT '告警频率：30m,1h,5h,12h,24h',
+  `alarmTime` datetime DEFAULT NULL COMMENT '告警时间',
+  `sendTime` datetime DEFAULT NULL COMMENT '发送告警时间',
+  `updateTime` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `regserver` */
 
@@ -75,7 +90,7 @@ CREATE TABLE `regserver` (
   `createTime` datetime NOT NULL COMMENT '更新时间',
   `updateTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `route` */
 
@@ -95,7 +110,7 @@ CREATE TABLE `route` (
   `replenishRate` int(6) DEFAULT NULL COMMENT '每秒流量',
   `burstCapacity` int(6) DEFAULT NULL COMMENT '令牌总量',
   `weight` int(6) DEFAULT NULL COMMENT '权重值',
-  `status` varchar(2) DEFAULT NULL COMMENT '状态',
+  `status` varchar(2) DEFAULT NULL COMMENT '状态，0启用，1禁用',
   `stripPrefix` tinyint(1) DEFAULT NULL COMMENT '断言截取',
   `requestParameter` varchar(200) DEFAULT NULL COMMENT '请求参数',
   `accessHeader` varchar(200) DEFAULT NULL COMMENT 'header验证',

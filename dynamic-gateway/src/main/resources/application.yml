@@ -10,15 +10,20 @@ server:
 # eureka注册中心
 eureka:
   client:
+    # 拉取注册中心注册信息，默认true
+    fetchRegistry: true
+    # 重新拉取注册中心注册信息的时长，默认30s
+    registry-fetch-interval-seconds: 60
     serviceUrl:
       # 默认注册中心地址，如果为集群，请指向另一个注册中心，使用域名作为访问路径，如有多个节点，使用逗号','分隔
       # defaultZone: http://127.0.0.1:8761/eureka/,http://192.168.110.35:8761/eureka/,http://192.168.110.36:8761/eureka/
       defaultZone: http://127.0.0.1:8761/eureka/
+
   instance:
     # 注册到eureka的主机名称
-    hostname: 192.168.110.35
+    hostname: 127.0.0.1
     # 注册到eureka的主机IP
-    ipAddress: 192.168.110.35
+    ipAddress: 127.0.0.1
     # 优先使用IP名注册
     prefer-ip-address: true
     # 注册到eureaka的分组名称
@@ -53,10 +58,15 @@ logging:
     # log 级别
     org.springframework.cloud.gateway: debug
 
-# 熔断器配置
+# 熔断器配置，参见官方：https://github.com/Netflix/Hystrix/wiki/Configuration
 hystrix:
   command:
     default:
+      circuitBreaker:
+        # 用于跟踪运行状况以及重试机制，默认为true
+        enabled: true
+        # 熔断后拒绝所有请求的时间，之后再次重试请求，默认为5000
+        sleepWindowInMilliseconds: 300000
       execution:
         timeout:
           # enabled表示是否启用超时检测，默认为true
@@ -65,7 +75,7 @@ hystrix:
           thread:
             # 全局熔断器超时
             timeoutInMilliseconds: 5000
-    # myHystrix为熔断器名称，对应：filters.args.name
+    # myHystrix为自定义熔断器名称，对应：filters.args.name
     myHystrix:
       execution:
         timeout:

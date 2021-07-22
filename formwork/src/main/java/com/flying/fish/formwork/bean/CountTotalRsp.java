@@ -13,5 +13,6 @@ public class CountTotalRsp implements java.io.Serializable {
 
     private CountRsp dayCounts;
     private CountRsp hourCounts;
+    private CountRsp minCounts;
 
 }

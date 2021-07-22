@@ -1,6 +1,9 @@
 
 spring:
   cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
     gateway:
       discovery:
         locator:
@@ -28,6 +31,7 @@ spring:
         # 路径断言匹配
         - Path=/limiter/client/**
         filters:
+        # 开启相应过滤服务，注意SecureClientId对应SecureClientIdGatewayFilterFactory，GatewayFilterFactory为默认固定后缀,gateway只匹配前缀
         - SecureClientId=false
         - SecureIp=false
         - SecureToken=false

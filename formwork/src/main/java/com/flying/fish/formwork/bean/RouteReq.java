@@ -1,5 +1,6 @@
 package com.flying.fish.formwork.bean;
 
+import com.flying.fish.formwork.entity.Monitor;
 import lombok.Data;
 
 /**
@@ -21,6 +22,8 @@ public class RouteReq implements java.io.Serializable {
     private RouteLimiterBean limiter;
     //鉴权器开关
     private RouteAccessBean access;
+    //监控开关
+    private MonitorBean monitor;
 
     private Integer currentPage;
     private Integer pageSize;

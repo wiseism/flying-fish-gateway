@@ -1,7 +1,9 @@
 package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
+import com.flying.fish.formwork.entity.Monitor;
 import com.flying.fish.formwork.entity.Route;
+import com.flying.fish.formwork.service.MonitorService;
 import com.flying.fish.formwork.service.RouteService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
@@ -34,6 +36,9 @@ public class RouteRest extends BaseRest {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Resource
+    private MonitorService monitorService;
+
     /**
      * 添加网关路由
      * @param routeReq
@@ -49,9 +54,7 @@ public class RouteRest extends BaseRest {
         dbRoute.setId(route.getId());
         long count = routeService.count(dbRoute);
         Assert.isTrue(count <= 0, "RouteId已存在，不能重复");
-        routeService.save(route);
-        this.setRouteCacheVersion();
-        return new ApiResult();
+        return this.save(route, toMonitor(routeReq), true);
     }
 
     /**
@@ -67,15 +70,17 @@ public class RouteRest extends BaseRest {
         return new ApiResult();
     }
 
+    /**
+     * 更新网关路由
+     * @param routeReq
+     * @return
+     */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody RouteReq routeReq){
         Assert.notNull(routeReq, "未获取到对象");
         Route route = toRoute(routeReq);
         Assert.isTrue(StringUtils.isNotBlank(route.getId()), "未获取到对象ID");
-        route.setUpdateTime(new Date());
-        routeService.update(route);
-        this.setRouteCacheVersion();
-        return new ApiResult();
+        return this.save(route, toMonitor(routeReq), false);
     }
 
     @RequestMapping(value = "/findById", method = {RequestMethod.GET, RequestMethod.POST})
@@ -106,6 +111,11 @@ public class RouteRest extends BaseRest {
         return new ApiResult(routeService.pageList(route,currentPage, pageSize));
     }
 
+    /**
+     * 启用网关路由服务
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult start(@RequestParam String id){
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
@@ -116,6 +126,11 @@ public class RouteRest extends BaseRest {
         return new ApiResult();
     }
 
+    /**
+     * 停止网关路由服务
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/stop", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult stop(@RequestParam String id){
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
@@ -123,6 +138,37 @@ public class RouteRest extends BaseRest {
         dbRoute.setStatus(Constants.NO);
         routeService.update(dbRoute);
         this.setRouteCacheVersion();
+        return new ApiResult();
+    }
+
+    /**
+     * 保存网关路由服务
+     * @param route
+     * @param monitor
+     * @param isNews
+     * @return
+     */
+    private ApiResult save(Route route, Monitor monitor, boolean isNews){
+        route.setUpdateTime(new Date());
+        routeService.save(route);
+        this.setRouteCacheVersion();
+        //保存监控配置
+        if (monitor != null) {
+            monitor.setId(route.getId());
+            monitor.setUpdateTime(new Date());
+            this.validate(monitor);
+            monitorService.save(monitor);
+        } else {
+            if (!isNews) {
+                Monitor dbMonitor = monitorService.findById(route.getId());
+                //修改时，如果前端取消选中，并且数据库中又存在记录，则需要置为禁用状态
+                if (dbMonitor != null){
+                    dbMonitor.setStatus(Constants.NO);
+                    dbMonitor.setUpdateTime(new Date());
+                    monitorService.update(dbMonitor);
+                }
+            }
+        }
         return new ApiResult();
     }
 
@@ -197,6 +243,26 @@ public class RouteRest extends BaseRest {
             route.setFilterAuthorizeName(StringUtils.join(routeAccessList.toArray(), Constants.SEPARATOR_SIGN));
         }
         return route;
+    }
+
+    /**
+     * 获取监控配置
+     * @param routeReq
+     * @return
+     */
+    private Monitor toMonitor(RouteReq routeReq){
+        MonitorBean bean = routeReq.getMonitor();
+        if (bean != null){
+            // checked为true，则表示启用监控配置
+            if (bean.getChecked()){
+                RouteFormBean form = routeReq.getForm();
+                Monitor monitor = new Monitor();
+                BeanUtils.copyProperties(form.getMonitor(), monitor);
+                monitor.setStatus(Constants.YES);
+                return monitor;
+            }
+        }
+        return null;
     }
 
     /**

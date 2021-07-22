@@ -2,6 +2,7 @@ package com.flying.fish.gateway.filter;
 
 import com.flying.fish.formwork.util.HttpResponseUtils;
 import com.flying.fish.formwork.util.NetworkIpUtils;
+import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.gateway.cache.ClientIdCache;
 import com.flying.fish.gateway.cache.IpListCache;
 import com.flying.fish.gateway.cache.RegIpListCache;
@@ -38,6 +39,10 @@ public class IpGatewayFilter implements GatewayFilter, Ordered {
             String msg = "此IP已被限制，无权限访问网关!" +" ip:" + ip;
             log.error(msg);
             return HttpResponseUtils.writeUnauth(exchange.getResponse(), msg);
+        }
+        //做了负载均衡的route服务不做客户端IP验证
+        if (routeId.startsWith(RouteConstants.BALANCED)){
+            return chain.filter(exchange);
         }
         if (!this.regPassIp(routeId, ip)){
             String msg = "客户端IP无权限访问网关路由："+ routeId +"! ip:" + ip;

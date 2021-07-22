@@ -74,6 +74,15 @@ public class CountRest extends BaseRest {
     }
 
     /**
+     * 统计按7天和按24小时维度计算的请求总量
+     * @return
+     */
+    @RequestMapping(value = "/request/app/total", method = {RequestMethod.GET, RequestMethod.POST})
+    public ApiResult routeAppTotal(@RequestParam(required=false) String id) {
+        return new ApiResult(countService.countRequestTotal(id));
+    }
+
+    /**
      * 流量
      * @param routeIds
      * @return

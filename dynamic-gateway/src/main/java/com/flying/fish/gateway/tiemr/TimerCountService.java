@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -29,10 +30,6 @@ public class TimerCountService {
     @Resource
     private RedisTemplate redisTemplate;
 
-    private static String minTag = "";
-    private static String hourTag = "";
-    private static String dayTag = "";
-
     /**
      * 每1分钟执行一次缓存同步
      */
@@ -40,34 +37,67 @@ public class TimerCountService {
     public void writerCache(){
         log.info("执行定时任务：统计数据同步到redis缓存...");
         //保存按分钟统计的数据
-        ConcurrentHashMap<String,Integer> minMap = CountCache.getCacheMap();
-
-        //保存按分钟统计的数据
-        String minKey = RouteConstants.COUNT_MIN_KEY + DateFormatUtils.format(new Date(), Constants.DATE_FORMAT_MIN);
-        if (minTag.equals(minKey)){
-            //清除，防止历史缓存数据
-            redisTemplate.delete(minKey);
-        }
-        syncCountCache(minKey, minMap);
-        minTag = minKey;
-
-        //保存按小时统计的数据
-        String hourKey = RouteConstants.COUNT_HOUR_KEY + DateFormatUtils.format(new Date(), Constants.DATE_FORMAT_HOUR);
-        //清除下一个小时的历史结果，防止历史缓存数据叠加
-        if (!hourTag.equals(hourKey)) {
-            redisTemplate.delete(hourKey);
-        }
-        syncCountCache(hourKey, minMap);
-        hourTag = hourKey;
-
-        //保存按天统计的数据
-        String dayKey = RouteConstants.COUNT_DAY_KEY + DateFormatUtils.format(new Date(), Constants.DATE_FORMAT_DAY);
-        syncCountCache(dayKey, minMap);
-        //数据缓存7天，7天后，redis清除指定KEY缓存数据
-        redisTemplate.expire(dayKey, 7, TimeUnit.DAYS);
-
+        ConcurrentHashMap<String,Integer> cacheMap = CountCache.getCacheMap();
+        //深克隆map
+        ConcurrentHashMap<String,Integer> minMap = new ConcurrentHashMap<>(cacheMap.size());
+        minMap.putAll(cacheMap);
         //每次统计完清除缓存统计数据，重新记录下一分钟请求量
         CountCache.clear();
+
+        //保存按分钟统计的数据,数据缓存1小时
+        String freshKey = RouteConstants.COUNT_MIN_KEY + ":FRESH";
+        String minKey = RouteConstants.COUNT_MIN_KEY + DateFormatUtils.format(new Date(), Constants.YYYYMMDDHHMM);
+        String min =  DateFormatUtils.format(new Date(), Constants.YYYYMMDDHHMM);
+        String minFresh = (String) redisTemplate.opsForValue().get(freshKey);
+        if (minFresh == null || Long.parseLong(min) > Long.parseLong(minFresh)){
+            this.recordCountCache(freshKey, min, minKey, minMap, 1, TimeUnit.HOURS);
+        }else {
+            this.syncCountCache(minKey, minMap);
+        }
+
+        //保存按小时统计的数据,数据缓存24小时
+        freshKey = RouteConstants.COUNT_HOUR_KEY + ":FRESH";
+        String hourKey = RouteConstants.COUNT_HOUR_KEY + DateFormatUtils.format(new Date(), Constants.YYYYMMDDHH);
+        String hour =  DateFormatUtils.format(new Date(), Constants.YYYYMMDDHH);
+        String hourFresh = (String) redisTemplate.opsForValue().get(freshKey);
+        if (hourFresh == null || Long.parseLong(hour) > Long.parseLong(hourFresh)){
+            this.recordCountCache(freshKey, hour, hourKey, minMap, 24, TimeUnit.HOURS);
+        }else {
+            this.syncCountCache(hourKey, minMap);
+        }
+
+        //保存按天统计的数据,数据缓存7天
+        freshKey = RouteConstants.COUNT_DAY_KEY + ":FRESH";
+        String dayKey = RouteConstants.COUNT_DAY_KEY + DateFormatUtils.format(new Date(), Constants.YYYYMMDD);
+        String day =  DateFormatUtils.format(new Date(), Constants.YYYYMMDD);
+        String dayFresh = (String) redisTemplate.opsForValue().get(freshKey);
+        if (dayFresh == null || Long.parseLong(day) > Long.parseLong(dayFresh)){
+            this.recordCountCache(freshKey, day, dayKey, minMap, 7, TimeUnit.DAYS);
+        }else {
+            this.syncCountCache(dayKey, minMap);
+        }
+    }
+
+    /**
+     * 设置缓存数据
+     * @param freshKey
+     * @param freshValue
+     * @param key
+     * @param value
+     * @param timeout
+     * @param timeUnit
+     */
+    private void recordCountCache(String freshKey, String freshValue, String key, ConcurrentHashMap<String,Integer> value, int timeout, TimeUnit timeUnit){
+        redisTemplate.opsForValue().set(freshKey, freshValue);
+        boolean exist = redisTemplate.hasKey(key);
+        Map<String,String> cacheMap = new HashMap<>(value.size());
+        value.forEach((k,v)->cacheMap.put(k,String.valueOf(v)));
+        redisTemplate.opsForHash().putAll(key, cacheMap);
+        //新增key设置过期时间
+        if (!exist){
+            //redis过期清除指定KEY缓存数据
+            redisTemplate.expire(key, timeout, timeUnit);
+        }
     }
 
     /**

@@ -32,11 +32,6 @@ public class ProducerController {
      */
     @RequestMapping(value = "/test")
     public String test() {
-//        try{
-//            Thread.sleep(4 * 1000);
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
         return "test api server port: " + port + ",ok:" + System.currentTimeMillis();
     }
 
@@ -46,11 +41,6 @@ public class ProducerController {
      */
     @RequestMapping(value = "/test0")
     public String test0() {
-//        try{
-//            Thread.sleep(7 * 1000);
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
         return "test0 api server port: " + port + ",ok:" + System.currentTimeMillis();
     }
 
@@ -60,11 +50,11 @@ public class ProducerController {
      */
     @RequestMapping(value = "/test1")
     public String test1() {
-//        try{
-//            Thread.sleep(7 * 1000);
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
+        try {
+            Thread.sleep(4 * 1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "test1 api server port: " + port + ",ok:" + System.currentTimeMillis();
     }
 

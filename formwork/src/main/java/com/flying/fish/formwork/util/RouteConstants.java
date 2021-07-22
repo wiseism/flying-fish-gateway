@@ -40,6 +40,14 @@ public class RouteConstants {
      * redis同步版本缓存key
      */
     public final static String SYNC_VERSION_KEY = "fish_gateway_sync_version";
+    /**
+     * redis同步请求时间缓存key
+     */
+    public final static String SYNC_REQUEST_TIME_KEY = "fish_gateway_request_time";
+    /**
+     * redis控制队列缓存key
+     */
+    public final static String MONITOR_QUEUE_KEY = "fish_gateway_monitor_queue";
 
     /**
      * 熔断器

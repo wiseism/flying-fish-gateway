@@ -38,6 +38,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.flying.fish</groupId>
             <artifactId>formwork</artifactId>
             <version>1.0-SNAPSHOT</version>

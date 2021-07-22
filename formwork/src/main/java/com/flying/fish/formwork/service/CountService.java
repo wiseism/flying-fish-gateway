@@ -48,6 +48,7 @@ public class CountService {
     public ApiResult countRouteList(Route route, int currentPage, int pageSize){
         PageResult<Route> pageResult = routeService.pageList(route,currentPage, pageSize);
         if (pageResult.getPageSize() > 0){
+            //只取当天的
             String key = RouteConstants.COUNT_DAY_KEY + DateFormatUtils.format(new Date(), Constants.DATE_FORMAT_DAY);
             Map<String,String> countMap = redisTemplate.opsForHash().entries(key);
             List<Route> routeList = pageResult.getLists();
@@ -70,6 +71,18 @@ public class CountService {
     }
 
     /**
+     * 统计按7天和按24小时、60分钟维度计算的请求总量
+     * @return
+     */
+    public CountTotalRsp countRequestTotal(String routeId){
+        CountTotalRsp rsp = new CountTotalRsp();
+        rsp.setDayCounts(this.get7DayTotalApiCount(routeId));
+        rsp.setHourCounts(this.get24HourTotalApiCount(routeId));
+        rsp.setMinCounts(this.get60MinTotalApiCount(routeId));
+        return rsp;
+    }
+
+    /**
      * 统计按7天和按24小时维度计算的请求总量
      * @return
      */
@@ -78,6 +91,27 @@ public class CountService {
         rsp.setDayCounts(this.get7DayTotalApiCount());
         rsp.setHourCounts(this.get24HourTotalApiCount());
         return rsp;
+    }
+
+    /**
+     * 统计7天内请求量数据
+     */
+    public CountRsp get7DayTotalApiCount(String routeId){
+        return this.getCount(routeId, Constants.DAY);
+    }
+
+    /**
+     * 统计24小时内请求量数据
+     */
+    public CountRsp get24HourTotalApiCount(String routeId){
+        return this.getCount(routeId, Constants.HOUR);
+    }
+
+    /**
+     * 统计60分钟内请求量数据
+     */
+    public CountRsp get60MinTotalApiCount(String routeId){
+        return this.getCount(routeId, Constants.MIN);
     }
 
     /**
@@ -96,26 +130,51 @@ public class CountService {
 
     /**
      * 统计天或小时维度的请求量数据
+     * @param routeId
      * @param dateType
      * @return
      */
-    private CountRsp getCount(String dateType){
+    private CountRsp getCount(String routeId, String dateType){
         Object [] infos = getCountInfo(dateType);
-        List<String> dates = (List<String>)infos[0];
+        List<String> dateList = (List<String>)infos[0];
         String countTag = (String)infos[1];
-        List<Integer> counts = new ArrayList<>(dates.size());
-        for (String date : dates){
+        List<Integer> counts = new ArrayList<>(dateList.size());
+        List<String> dates = new ArrayList<>(dateList.size());
+        for (String date : dateList){
             Map<String,String> countMap = redisTemplate.opsForHash().entries(countTag + date);
             AtomicReference<Integer> count = new AtomicReference<>(0);
             if (!CollectionUtils.isEmpty(countMap)){
-                countMap.forEach((k,v)->count.updateAndGet(v1 -> v1 + Integer.parseInt(v)));
+                for (Map.Entry<String,String> entry : countMap.entrySet()){
+                    //如果有指定routeId,则只取该routeId的数据
+                    if (routeId != null) {
+                        if (!entry.getKey().equals(routeId)){
+                            continue;
+                        }
+                    }
+                    // 如果为负载均衡的统计结果，则跳过，单独在负载均衡界面展示统计指标
+                    if (entry.getKey().startsWith(RouteConstants.BALANCED)){
+                        continue;
+                    }
+                    count.updateAndGet(v1 -> v1 + Integer.parseInt(entry.getValue()));
+                }
             }
+            dates.add(getFormatDateStr(date, dateType));
             counts.add(count.get());
         }
         CountRsp countRsp = new CountRsp();
         countRsp.setDates(dates);
         countRsp.setCounts(counts);
         return countRsp;
+    }
+
+
+    /**
+     * 统计天或小时维度的请求量数据
+     * @param dateType
+     * @return
+     */
+    private CountRsp getCount(String dateType){
+        return this.getCount(null, dateType);
     }
 
     /**
@@ -128,12 +187,13 @@ public class CountService {
         Assert.notNull(countReq, "未获取到对象");
         List<String> routeIds = countReq.getRouteIds();
         Assert.isTrue(routeIds != null, "未获取到路由ID");
-        String dateType = StringUtils.isNotBlank(countReq.getDateType()) ? countReq.getDateType() : "min";
+        String dateType = StringUtils.isNotBlank(countReq.getDateType()) ? countReq.getDateType() : Constants.MIN;
         Object [] infos = getCountInfo(dateType);
-        List<String> dates = (List<String>)infos[0];
+        List<String> dateList = (List<String>)infos[0];
+        List<String> dates = new ArrayList<>(dateList.size());
         String countTag = (String)infos[1];
         Map<String,List<Integer>> countMap = new HashMap<>(routeIds.size());
-        for (String date : dates){
+        for (String date : dateList){
             for (String routeId : routeIds){
                 String key = countTag + date;
                 String field = (isBalanced ? RouteConstants.BALANCED + "-" : "") + routeId;
@@ -145,6 +205,7 @@ public class CountService {
                 counts.add(count != null ? Integer.parseInt(count) : 0);
                 countMap.put(routeId, counts);
             }
+            dates.add(getFormatDateStr(date, dateType));
         }
 
         List<CountRsp.CountData> datas = new ArrayList<>();
@@ -158,6 +219,23 @@ public class CountService {
             datas.add(data);
         });
         return new ApiResult(rsp);
+    }
+
+    /**
+     * 截取时间格式，方便前端展示
+     * @param date
+     * @param dateType
+     * @return
+     */
+    private String getFormatDateStr(String date, String dateType){
+        if (Constants.HOUR.equals(dateType)){
+            //yyyyMMddHH=>HH
+            return date.substring(8);
+        } else if (Constants.MIN.equals(dateType)){
+            //yyyyMMddHHmm=>mm
+            return date.substring(10);
+        }
+        return date;
     }
 
     /**
@@ -184,27 +262,27 @@ public class CountService {
     }
 
     /**
-     * 按天生成统计范围
+     * 按天生成统计范围（计算一周内的统计值）
      * @return
      */
     private List<String> getCountDays(){
         List<String>  days = new ArrayList<>();
         for (int i = 6; i>=0; i--){
             Date dayDate = DateUtils.addDays(new Date(), - i);
-            String day = DateFormatUtils.format(dayDate, "yyyyMMdd");
+            String day = DateFormatUtils.format(dayDate, Constants.YYYYMMDD);
             days.add(day);
         }
         return days;
     }
 
     /**
-     * 按小时生成统计范围
+     * 按小时生成统计范围（计算一天内的统计值）
      * @return
      */
     private List<String> getCountHours(){
         List<String> hours = new ArrayList<>();
         for (int i = 23; i>=0; i--){
-            hours.add(DateFormatUtils.format(DateUtils.addHours(new Date(), - i), "HH"));
+            hours.add(DateFormatUtils.format(DateUtils.addHours(new Date(), - i), Constants.YYYYMMDDHH));
         }
         return hours;
     }
@@ -216,7 +294,7 @@ public class CountService {
     private List<String> getCountMins(){
         List<String> mins = new ArrayList<>();
         for (int i = 59; i>=0; i--){
-            mins.add(DateFormatUtils.format(DateUtils.addMinutes(new Date(), - i), "mm"));
+            mins.add(DateFormatUtils.format(DateUtils.addMinutes(new Date(), - i), Constants.YYYYMMDDHHMM));
         }
         return mins;
     }
