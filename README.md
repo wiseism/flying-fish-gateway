@@ -44,7 +44,7 @@
 
 #### 安装教程
 
-1.  依赖spring-boot 2.0.3.RELEASE、spring-cloud Finchley.SR4版本，注意版本的搭配
+1.  依赖spring-boot 2.3.9.RELEASE、spring-cloud Hoxton.SR10 版本，注意版本的搭配
 2.  需安装eureke、consul等其中任意一种，也可无需注册中心运行
 3.  详细安装文档：**[doc/flying-fish-gateway-说明文档.docx](https://gitee.com/omsgit/flying-fish-gateway/tree/snapshot.v.1.0/doc)** 
 
@@ -72,21 +72,21 @@
 （IP名单）
 ![接口文档](https://oscimg.oschina.net/oscnet/up-a5fad9cf38978d22150fb633e367583d720.png "接口文档")
 （接口文档）
-![接口统计](https://oscimg.oschina.net/oscnet/up-9f14af581c8273953b2016ad2d22dfb3384.png "接口统计")
+![接口统计](https://oscimg.oschina.net/oscnet/up-72f2ccc487377e1f585c72b270e3c0d529e.JPEG "接口统计")
 （接口统计）
+![接口监控](https://oscimg.oschina.net/oscnet/up-16fe307cc86ff3d49f0dce35b6019549d26.JPEG "接口监控")
+（接口监控）
 
 [参见个人说明文章](https://my.oschina.net/u/437309?tab=newest&catalogId=7056744)
 
 #### 更新记录
 
  ++++++++ **snapshot.v.3.0** 
-1. 升级springcloud\springboot版本（验证中）
-2. 扩展功能：新增接口心跳、监控、告警功能
+1. 升级springcloud Hoxton.SR10\springboot 2.3.9.RELEASE版本
+2. 扩展功能：新增接口心跳监控、邮件告警功能
 3. 代码优化，已知问题题修复
 
-注：
-前端需要同步更新到v.3.0
-此版本还未完成开发，请勿同步。
+注：前端需要同步更新到v.3.0
 
  ++++++++ **snapshot.v.2.0** 
 1. 代码优化，已知问题题修复
