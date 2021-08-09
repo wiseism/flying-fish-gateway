@@ -22,6 +22,7 @@ public class DynamicGatewayApplication {
      注意版本组合：
      Spring-Cloud               Spring-Boot
      =================          ==============
+     Hoxton.SR10                2.3.9.RELEASE
      Hoxton.SR4                 2.2.6.RELEASE
      Hoxton.SR1                 2.2.1.RELEASE
      Greenwich.SR3              2.1.1.RELEASE
