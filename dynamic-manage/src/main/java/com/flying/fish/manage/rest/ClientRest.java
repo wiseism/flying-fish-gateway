@@ -1,12 +1,14 @@
 package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
+import com.flying.fish.formwork.bean.ClientReq;
 import com.flying.fish.formwork.entity.Client;
 import com.flying.fish.formwork.service.ClientService;
+import com.flying.fish.formwork.service.CustomNacosConfigService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.formwork.bean.ClientReq;
+import com.flying.fish.formwork.util.UUIDUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * @Description 客户端管理控制器类
@@ -33,6 +34,9 @@ public class ClientRest extends BaseRest {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Resource
+    private CustomNacosConfigService customNacosConfigService;
+
     /**
      * 添加客户端
      * @param client
@@ -41,7 +45,7 @@ public class ClientRest extends BaseRest {
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
     public ApiResult add(@RequestBody Client client) {
         Assert.notNull(client, "未获取到对象");
-        client.setId(UUID.randomUUID().toString());
+        client.setId(UUIDUtils.getUUIDString());
         client.setCreateTime(new Date());
         this.validate(client);
         //验证名称是否重复
@@ -51,7 +55,8 @@ public class ClientRest extends BaseRest {
         Assert.isTrue(count <= 0, "客户端名称已存在，不能重复");
         //保存
         clientService.save(client);
-        this.setClientCacheVersion();
+        //this.setClientCacheVersion();
+        customNacosConfigService.publishClientNacosConfig(client.getId(), client.getIp());
         return new ApiResult();
     }
 
@@ -63,8 +68,11 @@ public class ClientRest extends BaseRest {
     @RequestMapping(value = "/delete", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult delete(@RequestParam String id) {
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
-        clientService.deleteById(id);
-        this.setClientCacheVersion();
+        Client dbClient = clientService.findById(id);
+        Assert.notNull(dbClient, "未获取到对象");
+        clientService.delete(dbClient);
+        //this.setClientCacheVersion();
+        customNacosConfigService.publishClientNacosConfig(id, dbClient.getIp());
         return new ApiResult();
     }
 
@@ -80,7 +88,8 @@ public class ClientRest extends BaseRest {
         client.setUpdateTime(new Date());
         this.validate(client);
         clientService.update(client);
-        this.setClientCacheVersion();
+        //this.setClientCacheVersion();
+        customNacosConfigService.publishClientNacosConfig(client.getId(), client.getIp());
         return new ApiResult();
     }
 
@@ -138,7 +147,8 @@ public class ClientRest extends BaseRest {
         Client dbClient = clientService.findById(id);
         dbClient.setStatus(Constants.YES);
         clientService.update(dbClient);
-        this.setClientCacheVersion();
+        //this.setClientCacheVersion();
+        customNacosConfigService.publishClientNacosConfig(id, dbClient.getIp());
         return new ApiResult();
     }
 
@@ -153,15 +163,16 @@ public class ClientRest extends BaseRest {
         Client dbClient = clientService.findById(id);
         dbClient.setStatus(Constants.NO);
         clientService.update(dbClient);
-        this.setClientCacheVersion();
+        //this.setClientCacheVersion();
+        customNacosConfigService.publishClientNacosConfig(id, dbClient.getIp());
         return new ApiResult();
     }
 
     /**
      * 对客户端数据进行变更后，设置redis中缓存的版本号
      */
+    @Deprecated
     private void setClientCacheVersion(){
         redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.CLIENT_ID, String.valueOf(System.currentTimeMillis()));
     }
-
 }

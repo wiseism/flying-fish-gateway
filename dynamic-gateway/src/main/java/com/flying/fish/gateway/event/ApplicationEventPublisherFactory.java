@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @Description 发布事件，触发监听事件的方法
- * @Author jianglong
+ * @Author JL
  * @Date 2020/06/02
  * @Version V1.0
  */
@@ -29,8 +29,10 @@ public class ApplicationEventPublisherFactory implements ApplicationEventPublish
 
     /**
      * 刷新路由，通过spring的事件监听机制，发布事件，触发监听方法的执行
+     * （已过时，启用nacos配置监听事件，参见：NacosConfigRefreshEventListener）
      * @return
      */
+    @Deprecated
     public void publisherEvent(String type){
         if (StringUtils.equals(type, RouteConstants.IP)) {
             this.publisher.publishEvent(new DataIpApplicationEvent(this));
@@ -44,8 +46,17 @@ public class ApplicationEventPublisherFactory implements ApplicationEventPublish
     }
 
     /**
+     * 发布清除权重分组WeightRemoveApplicationEvent事件，会触发MyWeightCalculatorWebFilter过滤器监听并从权重集合中移除group
+     * @param group
+     */
+    public void publisherWeightRemoveEvent(String group){
+        this.publisher.publishEvent(new WeightRemoveApplicationEvent(this, group));
+    }
+
+    /**
      * 刷新网关路由
      */
+    @Deprecated
     public void refreshRoutesEvent(){
         this.publisher.publishEvent(new RefreshRoutesEvent(this));
     }

@@ -3,11 +3,12 @@ package com.flying.fish.gateway.event;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * @Description 创建自定义IP事件
- * @Author jianglong
+ * @Description 创建自定义IP事件（已过时，启用nacos配置监听事件，参见：NacosConfigRefreshEventListener）
+ * @Author JL
  * @Date 2020/05/28
  * @Version V1.0
  */
+@Deprecated
 public class DataIpApplicationEvent extends ApplicationEvent {
     /**
      * Create a new ApplicationEvent.

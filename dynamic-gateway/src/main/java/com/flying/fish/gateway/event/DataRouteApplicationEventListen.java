@@ -13,6 +13,7 @@ import com.flying.fish.gateway.service.LoadRouteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.route.RouteDefinition;
+import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,14 +33,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @Description 注册网关路由事件，动态加载数据库网关路由信息，监听路由配置事件，重新动态加载网关路由数据
- * @Author jianglong
+ * @Description 注册网关路由事件，动态加载数据库网关路由信息，监听路由配置事件，重新动态加载网关路由数据(已过时)
+ * @Author JL
  * @Date 2020/05/27
  * @Version V1.0
  */
 @Slf4j
 @Component
-public class DataRouteApplicationEventListen implements RouteDefinitionRepository,ApplicationEventPublisherAware {
+@Deprecated
+public class DataRouteApplicationEventListen implements RouteDefinitionLocator,ApplicationEventPublisherAware {
     @Resource
     private RouteDao routeDao;
     @Resource
@@ -61,10 +63,13 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
      * 1.CustomApplicationEvent发布后，即触发listenEvent事件方法；
      * 2.publisher.publishEvent方法执行RefreshRoutesEvent事件后；
      * 3.gateway加调用getRouteDefinitions方法重新获取网关路由集合配置并刷新内存
+     * （已过时，启用nacos配置监听事件，参见：NacosConfigRefreshEventListener）
      */
+    @Deprecated
     @EventListener(classes = DataRouteApplicationEvent.class)
     public void listenEvent() {
-        init();
+        // Todo 停止使用，请用InitRouteService类init()方法
+        //init();
         this.publisher.publishEvent(new RefreshRoutesEvent(this));
     }
 
@@ -77,19 +82,20 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
         return Flux.fromIterable(routeDefinitions);
     }
 
-    @Deprecated
-    @Override
-    public Mono<Void> save(Mono<RouteDefinition> route) {
-        return Mono.defer(() -> Mono.error(new NotFoundException("此save方法不提供功能实现，请勿调用")));
-    }
+//    @Deprecated
+//    @Override
+//    public Mono<Void> save(Mono<RouteDefinition> route) {
+//        return Mono.defer(() -> Mono.error(new NotFoundException("此save方法不提供功能实现，请勿调用")));
+//    }
+
+//    @Deprecated
+//    @Override
+//    public Mono<Void> delete(Mono<String> routeId) {
+//        return Mono.defer(() -> Mono.error(new NotFoundException("此delete方法不提供功能实现，请勿调用")));
+//    }
 
     @Deprecated
-    @Override
-    public Mono<Void> delete(Mono<String> routeId) {
-        return Mono.defer(() -> Mono.error(new NotFoundException("此delete方法不提供功能实现，请勿调用")));
-    }
-
-    @PostConstruct
+    //@PostConstruct
     public void init(){
         initLoadRoute();
         initLoadBalanced();
@@ -144,7 +150,7 @@ public class DataRouteApplicationEventListen implements RouteDefinitionRepositor
                                     String weightName = RouteConstants.BALANCED + "-" + b.getId();
                                     Route route = optionalRoute.get();
                                     //获取route，改变参数，构造一个新route对象
-                                    route.setId(RouteConstants.BALANCED + "-" + route.getId());
+                                    route.setId(weightName + "-" + route.getId());
                                     route.setPath(RouteConstants.PARENT_PATH + b.getLoadUri());
                                     //设置负载参数
                                     route.setWeightName(weightName);

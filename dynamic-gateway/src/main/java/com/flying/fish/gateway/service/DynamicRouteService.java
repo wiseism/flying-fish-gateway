@@ -3,59 +3,65 @@ package com.flying.fish.gateway.service;
 import com.flying.fish.gateway.event.ApplicationEventPublisherFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
-import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
+import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Description 动态添加路由
- * @Author jianglong
+ * @Author JL
  * @Date 2020/05/11
  * @Version V1.0
  */
 @Service
 public class DynamicRouteService {
 
+    /**
+     * inMemoryRouteDefinitionRepository 类中实现RouteDefinitionLocator接口
+     * gateway应用在启动过程中，会调用所有实现类的getRouteDefinitions()方法，从routeDefinitions集合中加载网关路由信息
+     */
     @Resource
-    private RouteDefinitionWriter routeDefinitionWriter;
+    private RouteDefinitionRepository inMemoryRouteDefinitionRepository;
 
     @Autowired
     private ApplicationEventPublisherFactory publisherApplicationEventFactory;
 
     /**
-     * 增加路由
-     * @param definition
+     * 批量增加路由
+     * @param routeDefinitions
      * @return
      */
-    public void add(RouteDefinition definition) {
+    public void addAll(List<RouteDefinition> routeDefinitions) {
+        routeDefinitions.forEach(r->add(r));
+    }
+
+    /**
+     * 增加路由
+     * @param routeDefinition
+     * @return
+     */
+    public void add(RouteDefinition routeDefinition) {
         try {
-            routeDefinitionWriter.save(Mono.just(definition)).subscribe();
-            publisherApplicationEventFactory.refreshRoutesEvent();
+            inMemoryRouteDefinitionRepository.save(Mono.just(routeDefinition)).subscribe();
         } catch (Exception e) {
-            throw new IllegalArgumentException("添加网关路由失败", e);
+            throw new IllegalArgumentException("添加网关路由失败:" + e.getMessage(), e);
         }
     }
 
     /**
      * 更新路由,删除》添加
-     * @param definition
+     * @param routeDefinition
      * @return
      */
-    public void update(RouteDefinition definition) {
-        try {
-            delete(definition.getId());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("更新网关路由失败", e);
-        }
-        try {
-            add(definition);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("更新网关路由失败", e);
-        }
+    public void update(RouteDefinition routeDefinition) {
+        delete(routeDefinition.getId());
+        add(routeDefinition);
     }
 
     /**
@@ -65,12 +71,12 @@ public class DynamicRouteService {
      */
     public void delete(String id) {
         try {
-            this.routeDefinitionWriter.delete(Mono.just(id)).
+            inMemoryRouteDefinitionRepository.delete(Mono.just(id)).
                     then(Mono.defer(() -> Mono.just(ResponseEntity.ok().build()))).
                     onErrorResume((t) -> t instanceof NotFoundException, (t) -> Mono.just(ResponseEntity.notFound().build())).
                     subscribe();
         }catch(Exception e){
-            throw new IllegalArgumentException("删除网关路由"+ id +"失败", e);
+            throw new IllegalArgumentException("删除网关路由"+ id +"失败:" + e.getMessage(), e);
         }
     }
 
@@ -78,7 +84,16 @@ public class DynamicRouteService {
      * 刷新路由，通过spring的事件监听机制，发布事件，触发监听方法的执行
      * @return
      */
+    @Deprecated
     public void fresh(String type){
         publisherApplicationEventFactory.publisherEvent(type);
+    }
+
+    /**
+     * 获取所有网关路由信息
+     * @return
+     */
+    public Flux<RouteDefinition> getRouteDefinitions() {
+        return inMemoryRouteDefinitionRepository.getRouteDefinitions();
     }
 }

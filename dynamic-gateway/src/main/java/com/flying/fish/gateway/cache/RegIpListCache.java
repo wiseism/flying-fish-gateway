@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2020/05/28
  * @Version V1.0
  */
+@Deprecated
 public class RegIpListCache {
     private static ConcurrentHashMap<String,Object> cacheMap = new ConcurrentHashMap<>();
 
@@ -31,5 +32,9 @@ public class RegIpListCache {
 
     public static synchronized void clear(){
         cacheMap.clear();
+    }
+
+    public static ConcurrentHashMap<String,Object> getCacheMap(){
+        return cacheMap;
     }
 }

@@ -1,15 +1,18 @@
 package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
+import com.flying.fish.formwork.bean.BalancedReq;
+import com.flying.fish.formwork.bean.BalancedRsp;
 import com.flying.fish.formwork.entity.Balanced;
 import com.flying.fish.formwork.entity.LoadServer;
 import com.flying.fish.formwork.service.BalancedService;
+import com.flying.fish.formwork.service.CustomNacosConfigService;
 import com.flying.fish.formwork.service.LoadServerService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.formwork.bean.BalancedReq;
-import com.flying.fish.formwork.bean.BalancedRsp;
+import com.flying.fish.formwork.util.UUIDUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @Description 负载配置管理控制器
@@ -27,6 +29,7 @@ import java.util.UUID;
  * @Date 2020/06/28
  * @Version V1.0
  */
+@Slf4j
 @RestController
 @RequestMapping("/balanced")
 public class BalancedRest extends BaseRest {
@@ -40,6 +43,9 @@ public class BalancedRest extends BaseRest {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Resource
+    private CustomNacosConfigService customNacosConfigService;
+
     /**
      * 添加负载配置
      * @param balancedReq
@@ -49,7 +55,7 @@ public class BalancedRest extends BaseRest {
     public ApiResult add(@RequestBody BalancedReq balancedReq) {
         Assert.notNull(balancedReq, "未获取到对象");
         Balanced balanced = new Balanced();
-        balanced.setId(UUID.randomUUID().toString());
+        balanced.setId(UUIDUtils.getUUIDString());
         balanced.setName(balancedReq.getName());
         balanced.setGroupCode(balancedReq.getGroupCode());
         balanced.setLoadUri(balancedReq.getLoadUri());
@@ -73,7 +79,8 @@ public class BalancedRest extends BaseRest {
                 loadServer.setCreateTime(new Date());
                 loadServerService.save(loadServer);
             }
-            this.setRouteCacheVersion();
+            //this.setRouteCacheVersion();
+            customNacosConfigService.publishBalancedNacosConfig(balanced.getId());
         }
         return new ApiResult();
     }
@@ -87,7 +94,8 @@ public class BalancedRest extends BaseRest {
     public ApiResult delete(@RequestParam String id) {
         Assert.isTrue(StringUtils.isNotBlank(id), "未获取到对象ID");
         balancedService.deleteAndServer(id);
-        this.setRouteCacheVersion();
+        //this.setRouteCacheVersion();
+        customNacosConfigService.publishBalancedNacosConfig(id);
         return new ApiResult();
     }
 
@@ -111,7 +119,8 @@ public class BalancedRest extends BaseRest {
             balanced.setUpdateTime(new Date());
             balancedService.update(balanced);
             loadServerService.updates(balanced.getId(), balancedReq.getServerList());
-            this.setRouteCacheVersion();
+            //this.setRouteCacheVersion();
+            customNacosConfigService.publishBalancedNacosConfig(balanced.getId());
         }
         return new ApiResult();
     }
@@ -170,7 +179,8 @@ public class BalancedRest extends BaseRest {
         Balanced dbBalanced = balancedService.findById(id);
         dbBalanced.setStatus(Constants.YES);
         balancedService.update(dbBalanced);
-        this.setRouteCacheVersion();
+        //this.setRouteCacheVersion();
+        customNacosConfigService.publishBalancedNacosConfig(id);
         return new ApiResult();
     }
 
@@ -185,13 +195,15 @@ public class BalancedRest extends BaseRest {
         Balanced dbBalanced = balancedService.findById(id);
         dbBalanced.setStatus(Constants.NO);
         balancedService.update(dbBalanced);
-        this.setRouteCacheVersion();
+        //this.setRouteCacheVersion();
+        customNacosConfigService.publishBalancedNacosConfig(id);
         return new ApiResult();
     }
 
     /**
      * 对路由数据进行变更后，设置redis中缓存的版本号
      */
+    @Deprecated
     private void setRouteCacheVersion(){
         redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.ROUTE, String.valueOf(System.currentTimeMillis()));
     }

@@ -1,11 +1,12 @@
 package com.flying.fish.manage.rest;
 
 import com.flying.fish.formwork.base.BaseRest;
+import com.flying.fish.formwork.bean.SecureIpReq;
 import com.flying.fish.formwork.entity.SecureIp;
+import com.flying.fish.formwork.service.CustomNacosConfigService;
 import com.flying.fish.formwork.service.SecureIpService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.RouteConstants;
-import com.flying.fish.formwork.bean.SecureIpReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
@@ -16,7 +17,7 @@ import java.util.Date;
 
 /**
  * @Description Ip管理控制器
- * @Author jianglong
+ * @Author JL
  * @Date 2020/05/28
  * @Version V1.0
  */
@@ -29,6 +30,9 @@ public class SecureIpRest extends BaseRest {
 
     @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private CustomNacosConfigService customNacosConfigService;
 
     /**
      * 添加IP
@@ -47,7 +51,8 @@ public class SecureIpRest extends BaseRest {
         long count = secureIpService.count(qSecureIp);
         Assert.isTrue(count <= 0, "该IP已添加，请不要重复添加");
         secureIpService.save(secureIp);
-        this.setIpCacheVersion();
+        //this.setIpCacheVersion();
+        customNacosConfigService.publishIpNacosConfig(secureIp.getIp());
         return new ApiResult();
     }
 
@@ -60,7 +65,8 @@ public class SecureIpRest extends BaseRest {
     public ApiResult delete(@RequestParam String ip) {
         Assert.isTrue(StringUtils.isNotBlank(ip), "IP值不能为空");
         secureIpService.deleteById(ip);
-        this.setIpCacheVersion();
+        //this.setIpCacheVersion();
+        customNacosConfigService.publishIpNacosConfig(ip);
         return new ApiResult();
     }
 
@@ -76,7 +82,8 @@ public class SecureIpRest extends BaseRest {
         secureIp.setUpdateTime(new Date());
         this.validate(secureIp);
         secureIpService.update(secureIp);
-        this.setIpCacheVersion();
+        //this.setIpCacheVersion();
+        customNacosConfigService.publishIpNacosConfig(secureIp.getIp());
         return new ApiResult();
     }
 
@@ -114,6 +121,7 @@ public class SecureIpRest extends BaseRest {
     /**
      * 对IP数据进行变更后，设置redis中缓存的版本号
      */
+    @Deprecated
     private void setIpCacheVersion(){
         redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.IP, String.valueOf(System.currentTimeMillis()));
     }

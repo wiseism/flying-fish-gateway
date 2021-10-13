@@ -28,6 +28,13 @@ public interface LoadServerDao extends JpaRepository<LoadServer, Long> {
      */
     List<LoadServer> queryByBalancedId(String balancedId);
 
+    /**
+     * 查询指定路由关联的负载服务
+     * @param routeId
+     * @return
+     */
+    List<LoadServer> queryByRouteId(String routeId);
+
     @Query(value = "SELECT r.name,r.groupCode,r.uri,r.path,r.method,r.status,l.id,l.routeId,l.weight FROM route r INNER JOIN loadserver l ON r.id=l.routeId WHERE l.balancedId=?1",
             nativeQuery = true)
     List<Map> queryLoadServerList(String balancedId);

@@ -192,11 +192,12 @@ public class CountService {
         List<String> dateList = (List<String>)infos[0];
         List<String> dates = new ArrayList<>(dateList.size());
         String countTag = (String)infos[1];
+        String balancedId = countReq.getBalancedId().replaceAll("-","");
         Map<String,List<Integer>> countMap = new HashMap<>(routeIds.size());
         for (String date : dateList){
             for (String routeId : routeIds){
                 String key = countTag + date;
-                String field = (isBalanced ? RouteConstants.BALANCED + "-" : "") + routeId;
+                String field = (isBalanced ? RouteConstants.BALANCED + "-" + balancedId  + "-" : "") + routeId;
                 String count = (String) redisTemplate.opsForHash().get(key, field);
                 List<Integer> counts = countMap.get(routeId);
                 if (counts == null){

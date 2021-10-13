@@ -108,6 +108,21 @@ public class LoadRouteService {
         if (StringUtils.isNotBlank(r.getMethod())) {
             predicates.add(setPredicateDefinition(RouteConstants.METHOD, r.getMethod()));
         }
+        //断言主机
+        if (StringUtils.isNotBlank(r.getHost())) {
+            String[] parameters = r.getHost().split(Constants.SEPARATOR_SIGN);
+            predicates.add(setPredicateDefinition(RouteConstants.HOST, parameters));
+        }
+        //断言远程地址
+        if (StringUtils.isNotBlank(r.getRemoteAddr())) {
+            String[] parameters = r.getRemoteAddr().split(Constants.SEPARATOR_SIGN);
+            predicates.add(setPredicateDefinition(RouteConstants.REMOTE_ADDR, parameters));
+        }
+        //断言Header
+        if (StringUtils.isNotBlank(r.getHeader())) {
+            String[] parameters = r.getHeader().split(Constants.SEPARATOR_SIGN);
+            predicates.add(setPredicateDefinition(RouteConstants.HEADER, parameters));
+        }
         //URL截取方式
         if (r.getStripPrefix() != null && r.getStripPrefix().intValue() > 0) {
             filters.add(setFilterDefinition(RouteConstants.STRIP_PREFIX, String.valueOf(r.getStripPrefix())));
@@ -116,6 +131,11 @@ public class LoadRouteService {
         if (StringUtils.isNotBlank(r.getRequestParameter())) {
             String[] parameters = r.getRequestParameter().split(Constants.SEPARATOR_SIGN);
             filters.add(setFilterDefinition(RouteConstants.ADD_REQUEST_PARAMETER, parameters));
+        }
+        //重写Path路径
+        if (StringUtils.isNotBlank(r.getRewritePath())) {
+            String[] parameters = r.getRewritePath().split(Constants.SEPARATOR_SIGN);
+            filters.add(setFilterDefinition(RouteConstants.REWRITE_PATH, parameters));
         }
         //鉴权
         if (StringUtils.isNotBlank(r.getFilterAuthorizeName())){
@@ -244,6 +264,14 @@ public class LoadRouteService {
         if (StringUtils.isNotBlank(r.getMethod())) {
             config.setMethod(r.getMethod());
         }
+        //断言主机
+        if (StringUtils.isNotBlank(r.getHost())) {
+            config.setHost(r.getHost());
+        }
+        //断言远程地址
+        if (StringUtils.isNotBlank(r.getRemoteAddr())) {
+            config.setRemoteAddr(r.getRemoteAddr());
+        }
         //断言截取
         if (r.getStripPrefix() != null && r.getStripPrefix() > 0) {
             config.setStripPrefix(r.getStripPrefix().intValue());
@@ -253,6 +281,12 @@ public class LoadRouteService {
             String[] parameters = r.getRequestParameter().split(Constants.SEPARATOR_SIGN);
             config.setRequestParameterName(parameters[0]);
             config.setRequestParameterValue(parameters[1]);
+        }
+        //重写Path路径
+        if (StringUtils.isNotBlank(r.getRewritePath())) {
+            String[] parameters = r.getRewritePath().split(Constants.SEPARATOR_SIGN);
+            config.setRewritePathName(parameters[0]);
+            config.setRewritePathValue(parameters[1]);
         }
         //过滤器,id,ip,token
         if (StringUtils.isNotBlank(r.getFilterGatewaName())) {

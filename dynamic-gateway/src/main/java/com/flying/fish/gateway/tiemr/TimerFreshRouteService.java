@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
- * @Description 定时刷新route路由配置，如：变更配置后，会在redis中记录版本号，本地版本号不相同，则重新加载最新路由配置
- * @Author jianglong
+ * @Description 定时刷新route路由配置，如：变更配置后，会在redis中记录版本号，本地版本号不相同，则重新加载最新路由配置（已过时，启用nacos配置监听事件，参见：NacosConfigRefreshEventListener）
+ * @Author JL
  * @Date 2020/07/10
  * @Version V1.0
  */
 @Slf4j
-@Service
+//@Service
+@Deprecated
 public class TimerFreshRouteService {
 
     @Resource

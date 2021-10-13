@@ -57,4 +57,10 @@ public class Constants {
     public final static String YYYYMMDD = DATE_FORMAT_DAY;
     public final static String YYYYMMDDHH = "yyyyMMddHH";
     public final static String YYYYMMDDHHMM = "yyyyMMddHHmm";
+
+    /**
+     * 动作标识：update更新，remove删除
+     */
+    public final static String UPDATE = "update";
+    public final static String REMOVE = "remove";
 }

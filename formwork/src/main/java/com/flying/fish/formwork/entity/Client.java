@@ -24,6 +24,10 @@ import java.util.Date;
 public class Client implements java.io.Serializable {
     @Id
     private String id;
+    @NotNull(message = "客户端系统代号不能为空")
+    @Size(min = 2, max = 40, message = "网关路由系统代号长度必需在2到40个字符内")
+    @Column(name = "systemCode" )
+    private String systemCode;
     @NotNull(message = "客户端名称不能为空")
     @Size(min = 2, max = 40, message = "网关路由名称长度必需在2到40个字符内")
     @Column(name = "name")

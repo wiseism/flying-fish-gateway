@@ -4,6 +4,7 @@ import com.flying.fish.formwork.base.BaseService;
 import com.flying.fish.formwork.bean.RouteReq;
 import com.flying.fish.formwork.bean.RouteRsp;
 import com.flying.fish.formwork.dao.RouteDao;
+import com.flying.fish.formwork.entity.Client;
 import com.flying.fish.formwork.entity.Monitor;
 import com.flying.fish.formwork.entity.RegServer;
 import com.flying.fish.formwork.entity.Route;
@@ -11,6 +12,7 @@ import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.PageResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,7 +84,13 @@ public class RouteService extends BaseService<Route,String,RouteDao> {
      */
     @Override
     public PageResult<Route> pageList(Route route, int currentPage, int pageSize){
-        PageResult<Route> result = super.pageList(route,currentPage, pageSize);
+        //构造条件查询方式
+        ExampleMatcher matcher = ExampleMatcher.matching();
+        if (StringUtils.isNotBlank(route.getName())) {
+            //支持模糊条件查询
+            matcher = matcher.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains());
+        }
+        PageResult<Route> result = this.pageList(route, matcher, currentPage, pageSize);
         List<Route> routeList = result.getLists();
         if (CollectionUtils.isEmpty(routeList)){
             return result;

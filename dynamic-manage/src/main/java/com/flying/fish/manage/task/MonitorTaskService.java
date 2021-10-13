@@ -149,6 +149,12 @@ public class MonitorTaskService {
                     msg = ste.getMessage();
                 }catch(IOException ioe){
                     msg = ioe.getMessage();
+                }catch(Exception e){
+                    log.error("执行监控任务服务异常，监控id :{}，监控名称 :{},请求地址：{},请求模式：{}, 错误消息：{}",
+                            routeId, route.getName(), newUri, route.getMethod(), e.getMessage());
+                    log.error("", e);
+                    timoutMonitor(routeId);
+                    return;
                 }
                 //设置告警状态
                 if (isTimeout){

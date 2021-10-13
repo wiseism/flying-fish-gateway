@@ -30,6 +30,10 @@ spring:
         - Method=GET
         # 路径断言匹配,最新转发到：uri + path
         - Path=/limiter/client/**
+        # Host主机匹配
+        - Host=mytest.com
+        # 远程请求IP匹配,符合IPv4格式
+        - RemoteAddr=192.168.11.1/24
         filters:
         # 开启相应过滤服务，注意SecureClientId对应SecureClientIdGatewayFilterFactory，GatewayFilterFactory为默认固定后缀,gateway只匹配前缀
         - SecureClientId=false
@@ -41,6 +45,8 @@ spring:
         - StripPrefix=1
         # 在转发url后加参数version=test1
         - AddRequestParameter=version,test
+        # 重写Path转发请求地址,YAML规范限制$\用来代替$
+        - RewritePath=/foo/(?<segment>.*), /$\{segment}
         # 添加熔断机制,当服务不可用时或超过了指定超时长，则转发到fallback
         - name: CustomHystrix
           args:

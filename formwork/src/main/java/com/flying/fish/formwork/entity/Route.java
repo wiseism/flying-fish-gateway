@@ -22,7 +22,7 @@ import java.util.Date;
 public class Route implements java.io.Serializable {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull(message = "网关路由ID不能为空")
     @Size(min = 2, max = 40, message = "网关路由ID长度必需在2到40个字符内")
     private String id;
@@ -30,7 +30,11 @@ public class Route implements java.io.Serializable {
     @Size(min = 2, max = 40, message = "网关路由名称长度必需在2到40个字符内")
     @Column(name = "name" )
     private String name;
-    @NotNull(message = "客户端分组不能为空")
+    @NotNull(message = "网关路由系统代号不能为空")
+    @Size(min = 2, max = 40, message = "网关路由系统代号长度必需在2到40个字符内")
+    @Column(name = "systemCode" )
+    private String systemCode;
+    @NotNull(message = "网关路由客户端分组不能为空")
     @Column(name = "groupCode")
     private String groupCode;
     @NotNull(message = "网关路由服务uri不能为空")
@@ -46,6 +50,21 @@ public class Route implements java.io.Serializable {
      */
     @Column(name = "method")
     private String method;
+    /**
+     * 断言Hosts
+     */
+    @Column(name = "host")
+    private String host;
+    /**
+     * 断言RemoteAddrs
+     */
+    @Column(name = "remoteAddr")
+    private String remoteAddr;
+    /**
+     * 断言Headers
+     */
+    @Column(name = "header")
+    private String header;
     /**
      * 鉴权过滤器类型：ip,token,id
      */
@@ -105,6 +124,11 @@ public class Route implements java.io.Serializable {
      */
     @Column(name = "requestParameter")
     private String requestParameter;
+    /**
+     * 重写Path路径
+     */
+    @Column(name = "rewritePath")
+    private String rewritePath ;
     /**
      * 鉴权：Header
      */

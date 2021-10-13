@@ -2,8 +2,11 @@ package com.flying.fish.formwork.service;
 
 import com.flying.fish.formwork.base.BaseService;
 import com.flying.fish.formwork.dao.LoadServerDao;
+import com.flying.fish.formwork.entity.Balanced;
 import com.flying.fish.formwork.entity.LoadServer;
+import com.flying.fish.formwork.entity.Route;
 import com.flying.fish.formwork.util.PageResult;
+import com.flying.fish.formwork.util.RouteConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -69,6 +72,15 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
     }
 
     /**
+     * 查询指定路由关联的负载服务
+     * @param routeId
+     * @return
+     */
+    public List<LoadServer> queryByRouteId(String routeId){
+        return loadServerDao.queryByRouteId(routeId);
+    }
+
+    /**
      * 保存指定负载下的所有路由服务
      * @param serverList
      */
@@ -102,6 +114,46 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
                 }
             }
         }
+    }
+
+    /**
+     * 设置负载均衡网关路由配置
+     * @param balanced
+     * @param loadServer
+     * @param route
+     */
+    public void setBalancedRoute(Balanced balanced, LoadServer loadServer, Route route){
+        //获取route，改变参数，构造一个新route对象
+        String routeId = this.setBalancedRouteId(balanced.getId(), route.getId());
+        route.setId(routeId);
+        //设置断言路径
+        route.setPath(RouteConstants.PARENT_PATH + balanced.getLoadUri());
+        //设置负载参数,查找服务对应的路由服务
+        String weightName = this.setBalancedWeightName(balanced.getId());
+        route.setWeightName(weightName);
+        //设置负载权重值
+        route.setWeight(loadServer.getWeight());
+        //默认负载的断言路径截取级别为1
+        route.setStripPrefix(1);
+    }
+
+    /**
+     * 设置负载均衡网关路由的WeightName
+     * @param balancedId
+     * @return
+     */
+    public String setBalancedWeightName(String balancedId){
+        return RouteConstants.BALANCED + "-" + balancedId.replaceAll("-","");
+    }
+
+    /**
+     * 设置负载均衡网关路由ID
+     * @param balancedId
+     * @param routeId
+     * @return
+     */
+    public String setBalancedRouteId(String balancedId, String routeId){
+        return setBalancedWeightName(balancedId) + "-" + routeId;
     }
 
 }

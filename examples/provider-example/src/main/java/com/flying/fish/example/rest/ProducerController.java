@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 /**
  * @Description 生产者控制器
- * @Author jianglong
+ * @Author JL
  * @Date 2020/04/23
  * @Version V1.0
  */
@@ -58,4 +60,21 @@ public class ProducerController {
         return "test1 api server port: " + port + ",ok:" + System.currentTimeMillis();
     }
 
+    /**
+     * 提供外部调用API
+     * @return
+     */
+    @RequestMapping(value = "/getToken")
+    public String getToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * 提供外部调用API
+     * @return
+     */
+    @RequestMapping(value = "/getUser")
+    public String getUser() {
+        return "server port: " + port + ",ok:" + System.currentTimeMillis();
+    }
 }

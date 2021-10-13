@@ -31,6 +31,23 @@ public class RegServer {
     @Column(name = "routeId")
     private String routeId;
     /**
+     * token加密内容
+     */
+    @Column(name = "token")
+    private String token;
+    /**
+     * token加密密钥
+     */
+    @Column(name = "secretKey")
+    private String secretKey;
+    /**
+     * token有效期截止时间
+     */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "tokenEffectiveTime")
+    private Date tokenEffectiveTime;
+    /**
      * 状态，0是启用，1是禁用
      */
     @Column(name = "status")

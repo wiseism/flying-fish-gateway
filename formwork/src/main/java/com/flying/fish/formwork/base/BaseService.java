@@ -101,6 +101,12 @@ public class BaseService<T,ID,DAO extends JpaRepository> {
         return this.setPageResult(pageData.getContent(), currentPage, pageSize, pageData.getTotalElements());
     }
 
+    public PageResult<T> pageList(T t, ExampleMatcher matcher, int currentPage, int pageSize){
+        Pageable pageable = PageRequest.of(currentPage-1, pageSize, Sort.by(Sort.Direction.DESC, DEFAULT_SORT_FIELD));
+        Page<T> pageData  =  dao.findAll(Example.of(t, matcher), pageable);
+        return this.setPageResult(pageData.getContent(), currentPage, pageSize, pageData.getTotalElements());
+    }
+
     /**
      * 分页原生SQL查询
      * @param sql

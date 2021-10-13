@@ -21,9 +21,13 @@ public class RouteConstants {
     public static final String _GENKEY_ = "_genkey_";
     public static final String PATH = "Path";
     public static final String METHOD = "Method";
+    public static final String HOST = "Host";
+    public static final String REMOTE_ADDR = "RemoteAddr";
+    public static final String HEADER = "Header";
     public static final String WEIGHT = "Weight";
     public static final String STRIP_PREFIX = "StripPrefix";
     public static final String ADD_REQUEST_PARAMETER = "AddRequestParameter";
+    public static final String REWRITE_PATH = "RewritePath";
 
     /**
      * 负载转发根路径

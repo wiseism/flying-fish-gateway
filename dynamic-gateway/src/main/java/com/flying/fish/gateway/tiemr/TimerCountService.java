@@ -30,6 +30,8 @@ public class TimerCountService {
     @Resource
     private RedisTemplate redisTemplate;
 
+    private static final String FRESH = ":FRESH";
+
     /**
      * 每1分钟执行一次缓存同步
      */
@@ -45,7 +47,7 @@ public class TimerCountService {
         CountCache.clear();
 
         //保存按分钟统计的数据,数据缓存1小时
-        String freshKey = RouteConstants.COUNT_MIN_KEY + ":FRESH";
+        String freshKey = RouteConstants.COUNT_MIN_KEY + FRESH;
         String minKey = RouteConstants.COUNT_MIN_KEY + DateFormatUtils.format(new Date(), Constants.YYYYMMDDHHMM);
         String min =  DateFormatUtils.format(new Date(), Constants.YYYYMMDDHHMM);
         String minFresh = (String) redisTemplate.opsForValue().get(freshKey);
@@ -56,7 +58,7 @@ public class TimerCountService {
         }
 
         //保存按小时统计的数据,数据缓存24小时
-        freshKey = RouteConstants.COUNT_HOUR_KEY + ":FRESH";
+        freshKey = RouteConstants.COUNT_HOUR_KEY + FRESH;
         String hourKey = RouteConstants.COUNT_HOUR_KEY + DateFormatUtils.format(new Date(), Constants.YYYYMMDDHH);
         String hour =  DateFormatUtils.format(new Date(), Constants.YYYYMMDDHH);
         String hourFresh = (String) redisTemplate.opsForValue().get(freshKey);
@@ -67,7 +69,7 @@ public class TimerCountService {
         }
 
         //保存按天统计的数据,数据缓存7天
-        freshKey = RouteConstants.COUNT_DAY_KEY + ":FRESH";
+        freshKey = RouteConstants.COUNT_DAY_KEY + FRESH;
         String dayKey = RouteConstants.COUNT_DAY_KEY + DateFormatUtils.format(new Date(), Constants.YYYYMMDD);
         String day =  DateFormatUtils.format(new Date(), Constants.YYYYMMDD);
         String dayFresh = (String) redisTemplate.opsForValue().get(freshKey);

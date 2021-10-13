@@ -13,13 +13,14 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * @Description
- * @Author jianglong
+ * @Description 监听DataClientApplicationEvent事件，并触发客户端数据重新加载（已过时）
+ * @Author JL
  * @Date 2020/05/28
  * @Version V1.0
  */
 @Slf4j
 @Component
+@Deprecated
 public class DataClientApplicationEventListen {
 
     @Resource
@@ -27,18 +28,23 @@ public class DataClientApplicationEventListen {
 
     /**
      * 监听事件刷新配置；
-     * DataIpApplicationEvent发布后，即触发listenEvent事件方法；
+     * DataClientApplicationEvent发布后，即触发listenEvent事件方法；
+     * （已过时，启用nacos配置监听事件，参见：NacosConfigRefreshEventListener）
      */
+    @Deprecated
     @EventListener(classes = DataClientApplicationEvent.class)
     public void listenEvent() {
-        initLoadClient();
+        // Todo 停止使用，请用InitClientService类initLoadClient()方法
+        //initLoadClient();
     }
 
     /**
      * 第一次初始化加载
      */
-    @PostConstruct
+    @Deprecated
+    //@PostConstruct
     public void initLoadClient(){
+        /*
         List list = regServerService.allRegClientList();
         ClientIdCache.clear();
         RegIpListCache.clear();
@@ -75,6 +81,7 @@ public class DataClientApplicationEventListen {
             }
         }
         log.info("监听到客户端配置发生变更，重新加载客户端配置共{}条", size);
+        */
     }
 
 }
