@@ -32,6 +32,9 @@ management:
         # 开放所有端点health，info，metrics，通过actuator/+端点名就可以获取相应的信息。默认打开health和info
         - "*"
   health:
+    mail:
+      # 不开启mail健康检查
+      enabled: false
     # 开启后打印详细信息
     show-details: always
     refresh:

@@ -27,6 +27,8 @@ public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(contextPath + "/assets/**").permitAll()
                 .antMatchers(contextPath + "/login").permitAll()
+                .antMatchers("/actuator").permitAll()
+                .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage(contextPath + "/login").successHandler(successHandler).and()
