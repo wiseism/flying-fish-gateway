@@ -21,12 +21,12 @@ public class CookieFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行cookie过滤 ", route.getId());
         //header,ip,parm,time,cookie
         if (route.getFilterAuthorizeName().contains("cookie")){
+            log.info("处理网关路由请求{},执行cookie过滤 ", route.getId());
             String accessCookie = route.getAccessCookie();
             Assert.isTrue(StringUtils.isNotBlank(accessCookie),"自定义cookie不能为空");
-            Assert.isTrue(accessCookie.indexOf("=") != -1,"自定义 cookie 格式错误");
+            Assert.isTrue(accessCookie.contains("="),"自定义 cookie 格式错误");
             String[] datas = accessCookie.split("=");
             Assert.notNull(datas[0],"自定义 cookie 名称不能为空");
             Assert.isTrue(datas.length>1,"自定义 cookie 格式错误");

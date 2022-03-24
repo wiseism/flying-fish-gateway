@@ -1,4 +1,4 @@
-package com.flying.fish.gateway.filter;
+package com.flying.fish.gateway.filter.global;
 
 import com.flying.fish.formwork.util.NetworkIpUtils;
 import com.flying.fish.gateway.cache.CountCache;

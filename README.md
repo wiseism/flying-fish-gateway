@@ -6,6 +6,10 @@
 
 解决目前项目中A==>B,A==>C,A==>...,服务与服务之间以直链访问的方式，改为A==>gateway==>B\C\...，服务走网关访问另一个服务，使得服务通讯可控、可复用、统一管理、安全鉴权、服务能力保护等效果
 
+![网络架构流程](https://oscimg.oschina.net/oscnet/up-561ee6859c868ed8b098b313097d4f726c5.png "网络架构流程")
+
+(网络架构流程)
+
 #### 特色
 
 1.  完全支持动态网关路由配置，在控制台界面修改完毕，即可生效
@@ -16,9 +20,13 @@
 
 #### 流程图
 ![网络拓扑图](https://oscimg.oschina.net/oscnet/up-eb3ae5a6e7c95e3f28ac4bc666e6455ea9a.png "网络拓扑")
+
 （网络拓扑）
+
 ![执行流程图](https://oscimg.oschina.net/oscnet/up-060f6ce5895acaad0bb35dafca4c76ecf1e.png "执行流程")
+
 （执行流程）
+
 1.  前置nginx用于负载均衡，将请求代理分发到不同网关；
 2.  gateway网关路由对请求进行鉴权、限流、熔断、日志等；
 3.  gateway网关路由对注册服务进行管理与路由转发；
@@ -35,10 +43,13 @@
 3.  formwork为核心框架，提供基础与公共业务处理模块与类
 4.  admin-server为springboot服务提供监控管理，支持可视化WEBUI，只需启动即可，无其它业务操作
 5.  examples为示例项目
+6.  doc为项目使用说明文档，与升级版本SQL脚本
+
 
 后续开发计划：
-1.  增加全局日志输出，按一定格式存储，方便后续引入elk做数据分析
-2.  增加临控功能，支持大厅全局图表展示，与单个服务、单个客户端等访问量、流量、错误等监控图表展示
+1.  增加全局日志输出，按一定格式存储，方便后续引入elk做数据分析（已支持）
+2.  增加临控功能，支持大厅全局图表展示，与单个服务、单个客户端等访问量、流量、错误等监控图表展示（已部份支持）
+3.  增加可编程脚本组件，实现代码动态编译、热部署（已支持）
 
 
 #### 安装教程
@@ -64,9 +75,15 @@
 ![服务详情](https://oscimg.oschina.net/oscnet/up-59965a0a5c4a81408c39ed05e455d1cd92e.png "服务详情")
 （服务详情）
 ![注册服务](https://oscimg.oschina.net/oscnet/up-a6bf4b28a70bebfad8a64ec06ca3048f7ab.png "注册服务")
-（注册服务）
-![创建网关服务](https://oscimg.oschina.net/oscnet/up-87c5da8c27e917e913569c22089b65e989c.png "创建网关服务")
+（注册客户端拓扑）
+![注册客户端](https://oscimg.oschina.net/oscnet/up-1fc8fe48b58c22b5ed55fcfc8ceb967dbae.jpg "注册客户端")
+（注册客户端）
+![创建网关服务](https://oscimg.oschina.net/oscnet/up-068a1f08fe891ad61a3077702b77531a4ab.jpg "创建网关服务")
 （创建网关服务）
+![网关规则组件](https://oscimg.oschina.net/oscnet/up-81032cc9d0db52a33e85a448d39bec73a01.jpg "网关规则组件")
+（网关规则组件）
+![规则组件代码](https://oscimg.oschina.net/oscnet/up-bf5c7972212f79faaef2f54240cca3ea279.jpg "规则组件代码")
+（规则组件代码）
 ![IP名单](https://oscimg.oschina.net/oscnet/up-4f65dc499db0ac4031b94f86e8d4c93737f.png "IP名单")
 （IP名单）
 ![接口文档](https://oscimg.oschina.net/oscnet/up-a5fad9cf38978d22150fb633e367583d720.png "接口文档")
@@ -79,6 +96,13 @@
 [参见个人说明文章](https://my.oschina.net/u/437309?tab=newest&catalogId=7056744)
 
 #### 更新记录
+  ++++++++ **snapshot-nacos.v.3.2** 
+ 1. 增加基于groovy语言开发网关路由动态规则组件
+ 2. 代码优化，界面微调，已知问题题修复
+ 3. 更新VUE前端package.json中的插件版本
+ 
+ 注：前端需要同步更新到snapshot-nacos.v.3.2
+ 
  ++++++++ **snapshot-nacos.v.3.1** 
 1. 优化网关发布后，通过nacos配置中心实时推送并加载网关配置，替代原定时扫描模式
 2. 增加基于jwt的客户端访问网关Token权限较验

@@ -54,10 +54,9 @@ public class CustomNacosConfigService {
      * 将网关客户端ID推送到nacos中
      * @param clientId
      */
-    public void publishClientNacosConfig(final String clientId, final String clientIp){
+    public void publishClientNacosConfig(final String clientId){
         GatewayNacosConfigBean gatewayNacosConfig = new GatewayNacosConfigBean();
         gatewayNacosConfig.setClientId(clientId);
-        gatewayNacosConfig.setClientIp(clientIp);
         publishConfigToNacos(gatewayNacosConfig);
     }
 
@@ -68,6 +67,16 @@ public class CustomNacosConfigService {
     public void publishIpNacosConfig(final String ip){
         GatewayNacosConfigBean gatewayNacosConfig = new GatewayNacosConfigBean();
         gatewayNacosConfig.setIp(ip);
+        publishConfigToNacos(gatewayNacosConfig);
+    }
+
+    /**
+     * 将groovyScript规则引擎动态脚本ID配置推送到nacos中
+     * @param groovyScriptId
+     */
+    public void publishGroovyScriptNacosConfig(final Long groovyScriptId){
+        GatewayNacosConfigBean gatewayNacosConfig = new GatewayNacosConfigBean();
+        gatewayNacosConfig.setGroovyScriptId(groovyScriptId);
         publishConfigToNacos(gatewayNacosConfig);
     }
 

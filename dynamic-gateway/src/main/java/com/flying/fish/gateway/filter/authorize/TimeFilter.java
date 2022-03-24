@@ -27,11 +27,11 @@ public class TimeFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行time过滤 ", route.getId());
         if (route.getFilterAuthorizeName().contains("time")){
+            log.info("处理网关路由请求{},执行time过滤 ", route.getId());
             String accessTime = route.getAccessTime();
             Assert.isTrue(StringUtils.isNotBlank(accessTime),"自定义time时间段不能为空");
-            Assert.isTrue(accessTime.indexOf(",") != -1,"自定义time时间段格式错误");
+            Assert.isTrue(accessTime.contains(","),"自定义time时间段格式错误");
             String [] times = accessTime.split(",");
             String date = DateFormatUtils.format(new Date(), "YYYY-MM-DD");
             long startTime = this.getDateTime(date, times[0]);
@@ -51,7 +51,7 @@ public class TimeFilter extends FilterHandler {
      * @return
      */
     private long getDateTime(String date, String time){
-        if (time.indexOf(":") != -1 && time.lastIndexOf(":") == 5){
+        if (time.contains(":") && time.lastIndexOf(":") == 5){
             try {
                 return DateUtils.parseDate(date + " " + time, PATTERNS).getTime();
             }catch(ParseException pe){

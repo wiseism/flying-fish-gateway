@@ -92,7 +92,7 @@ public class TokenGatewayFilter implements GatewayFilter, Ordered {
             return null;
         }
         Optional<GatewayRegServer> optional = regServers.stream().filter(r -> token.equals(r.getToken())).findFirst();
-        return optional.isPresent() ? optional.get() : null;
+        return optional.orElse(null);
     }
 
     /**
@@ -117,7 +117,7 @@ public class TokenGatewayFilter implements GatewayFilter, Ordered {
      */
     public boolean isPassToken(String clientId, String token, String secretKey) throws TokenExpiredException, SignatureVerificationException{
         String sub = JwtTokenUtils.parseToken(token, secretKey);
-        if (sub != null && sub.indexOf(",") != -1){
+        if (sub != null && sub.contains(",")){
             //subs=routeId,clientId,time
             String [] subs = sub.split(",");
             //比较缓存中的clientId是否与请求中token所带的clinetId一致，防止盗用其它注册客户端token

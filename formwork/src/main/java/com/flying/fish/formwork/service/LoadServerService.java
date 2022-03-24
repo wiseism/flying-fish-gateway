@@ -33,8 +33,6 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
      */
     @Transactional(readOnly = true)
     public List loadServerList(String balancedId){
-        //String sql ="SELECT r.id,r.name,r.routeId,r.groupCode,r.uri,r.path,r.method FROM route r WHERE r.status='0' AND r.routeId IN (SELECT l.routeId FROM loadserver l WHERE l.balancedId=?)";
-        //return pageNativeQuery(sql, Arrays.asList(balancedId), currentPage, pageSize);
         return loadServerDao.queryLoadServerList(balancedId);
     }
 
@@ -47,10 +45,6 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
     @Transactional(readOnly = true)
     public PageResult notLoadServerPageList(int currentPage, int pageSize){
         String sql ="SELECT r.id,r.name,r.groupCode,r.uri,r.path,r.method FROM route r WHERE r.status='0' ";
-//        if (balancedId != null && balancedId > 0){
-//            sql += " AND r.id NOT IN (SELECT l.routePrimaryId FROM loadserver l WHERE l.balancedId=?)";
-//            return pageNativeQuery(sql, Arrays.asList(balancedId), currentPage, pageSize);
-//        }
         return pageNativeQuery(sql, null, currentPage, pageSize);
     }
 
@@ -108,7 +102,7 @@ public class LoadServerService extends BaseService<LoadServer, Long, LoadServerD
                     //比较weight值是否有改变
                     Integer weight = dbIdMap.get(loadServer.getId());
                     if (loadServer.getWeight().intValue() != weight.intValue()){
-                        loadServer.setWeight(weight.intValue());
+                        loadServer.setWeight(weight);
                         this.update(loadServer);
                     }
                 }

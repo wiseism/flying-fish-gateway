@@ -23,6 +23,8 @@ public class Constants {
     public static final String ALARM = "2";
 
     public static final String ENCODING = "UTF-8";
+    public static final String HTTP_REQUEST = "request";
+    public static final String HTTP_RESPONSE = "response";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String APPLICATION_JSON = "application/json;charset=UTF-8";
 

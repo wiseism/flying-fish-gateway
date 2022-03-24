@@ -96,13 +96,13 @@ public class LoadRouteService {
         List<FilterDefinition> filters = new ArrayList<>();
         definition.setFilters(filters);
         definition.setUri(this.getURI(r.getUri()));
+        //权重（注意此处，当权重值小于等于0，则表示无流量流入，不创建网关）
+        if (r.getWeight() != null && r.getWeight() > 0) {
+            predicates.add(setPredicateDefinition(RouteConstants.WEIGHT, r.getWeightName(), String.valueOf(r.getWeight())));
+        }
         //断言路径
         if (StringUtils.isNotBlank(r.getPath())) {
             predicates.add(setPredicateDefinition(RouteConstants.PATH, r.getPath()));
-        }
-        //权重
-        if (r.getWeight() != null && r.getWeight().intValue() > 0) {
-            predicates.add(setPredicateDefinition(RouteConstants.WEIGHT, r.getWeightName(), String.valueOf(r.getWeight())));
         }
         //请求模式
         if (StringUtils.isNotBlank(r.getMethod())) {
@@ -124,7 +124,7 @@ public class LoadRouteService {
             predicates.add(setPredicateDefinition(RouteConstants.HEADER, parameters));
         }
         //URL截取方式
-        if (r.getStripPrefix() != null && r.getStripPrefix().intValue() > 0) {
+        if (r.getStripPrefix() != null && r.getStripPrefix() > 0) {
             filters.add(setFilterDefinition(RouteConstants.STRIP_PREFIX, String.valueOf(r.getStripPrefix())));
         }
         //请求参数
@@ -144,13 +144,13 @@ public class LoadRouteService {
         //过滤器,id,ip,token
         if (StringUtils.isNotBlank(r.getFilterGatewaName())) {
             String names = r.getFilterGatewaName();
-            if (names.indexOf(RouteConstants.IP) != -1) {
+            if (names.contains(RouteConstants.IP)) {
                 filters.add(setFilterDefinition(RouteConstants.Secure.SECURE_IP, RouteConstants.TRUE));
             }
-            if (names.indexOf(RouteConstants.ID) != -1) {
+            if (names.contains(RouteConstants.ID)) {
                 filters.add(setFilterDefinition(RouteConstants.Secure.SECURE_CLIENT_ID, RouteConstants.TRUE));
             }
-            if (names.indexOf(RouteConstants.TOKEN) != -1) {
+            if (names.contains(RouteConstants.TOKEN)) {
                 filters.add(setFilterDefinition(RouteConstants.Secure.SECURE_TOKEN, RouteConstants.TRUE));
             }
         }
@@ -290,15 +290,15 @@ public class LoadRouteService {
         }
         //过滤器,id,ip,token
         if (StringUtils.isNotBlank(r.getFilterGatewaName())) {
-            String names = r.getFilterGatewaName();
             List<GatewayFilter> filters = new ArrayList<>();
-            if (names.indexOf(RouteConstants.IP) != -1) {
+            String names = r.getFilterGatewaName();
+            if (names.contains(RouteConstants.IP)) {
                 filters.add(new IpGatewayFilter(r.getId()));
             }
-            if (names.indexOf(RouteConstants.ID) != -1) {
+            if (names.contains(RouteConstants.ID)) {
                 filters.add(new ClientIdGatewayFilter(r.getId()));
             }
-            if (names.indexOf(RouteConstants.TOKEN) != -1) {
+            if (names.contains(RouteConstants.TOKEN)) {
                 filters.add(new TokenGatewayFilter(r.getId()));
             }
             config.setGatewayFilter(filters.toArray(new GatewayFilter[]{}));

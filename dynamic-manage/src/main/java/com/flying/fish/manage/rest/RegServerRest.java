@@ -9,7 +9,6 @@ import com.flying.fish.formwork.service.RegServerService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
 import com.flying.fish.formwork.util.JwtTokenUtils;
-import com.flying.fish.formwork.util.RouteConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
@@ -196,8 +195,7 @@ public class RegServerRest extends BaseRest {
     public ApiResult stopClientAllRoute(@RequestParam String clientId) {
         Assert.isTrue(StringUtils.isNotBlank(clientId), "未获取到对象ID");
         regServerService.stopClientAllRoute(clientId);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(clientId, null);
+        customNacosConfigService.publishClientNacosConfig(clientId);
         return new ApiResult();
     }
 
@@ -210,8 +208,7 @@ public class RegServerRest extends BaseRest {
     public ApiResult startClientAllRoute(@RequestParam String clientId) {
         Assert.isTrue(StringUtils.isNotBlank(clientId), "未获取到对象ID");
         regServerService.startClientAllRoute(clientId);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(clientId, null);
+        customNacosConfigService.publishClientNacosConfig(clientId);
         return new ApiResult();
     }
 
@@ -224,7 +221,6 @@ public class RegServerRest extends BaseRest {
     public ApiResult stopRouteAllClient(@RequestParam String routeId) {
         Assert.isTrue(StringUtils.isNotBlank(routeId), "未获取到对象ID");
         regServerService.stopRouteAllClient(routeId);
-        //this.setClientCacheVersion();
         customNacosConfigService.publishRouteNacosConfig(routeId);
         return new ApiResult();
     }
@@ -238,7 +234,6 @@ public class RegServerRest extends BaseRest {
     public ApiResult startRouteAllClient(@RequestParam String routeId) {
         Assert.isTrue(StringUtils.isNotBlank(routeId), "未获取到对象ID");
         regServerService.startRouteAllClient(routeId);
-        //this.setClientCacheVersion();
         customNacosConfigService.publishRouteNacosConfig(routeId);
         return new ApiResult();
     }
@@ -319,14 +314,6 @@ public class RegServerRest extends BaseRest {
         regServer.setSecretKey(null);
         regServerService.update(regServer);
         return new ApiResult();
-    }
-
-    /**
-     * 对客户端数据进行变更后，设置redis中缓存的版本号
-     */
-    @Deprecated
-    private void setClientCacheVersion(){
-        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.CLIENT_ID, String.valueOf(System.currentTimeMillis()));
     }
 
 }

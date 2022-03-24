@@ -108,15 +108,17 @@ public class InitRouteService {
             return ;
         }
         Map<String, Route> routeMap =  routeList.stream().collect(Collectors.toMap(Route::getId, r->r));
-        // 将同一个负载下的网关路由放在同一个集合中
-        Map<String, List<LoadServer>> serverRouteMap = loadServerList.stream().collect(Collectors.toMap(LoadServer::getBalancedId,
-                l-> new ArrayList<LoadServer>(){
-                    {add(l);}
-                },
-                (List<LoadServer> v1, List<LoadServer> v2) ->{
-                    v1.addAll(v2);
-                    return v1;
-                }));
+        // 将同一个负载下的网关路由放在同一个集合中(注意：过滤掉权重值为0的网关，表示无流量流入，无需创建网关)
+        Map<String, List<LoadServer>> serverRouteMap = loadServerList.stream().filter(s->s.getWeight()>0)
+                .collect(Collectors.toMap(LoadServer::getBalancedId,
+                    l-> new ArrayList<LoadServer>(){
+                        {add(l);}
+                    },
+                    (List<LoadServer> v1, List<LoadServer> v2) ->{
+                        v1.addAll(v2);
+                        return v1;
+                    })
+                );
         try {
             // 遍历负载均衡配置，组装生成新的route结构，并加载到gateway网关路由集合中
             for (Balanced b : balancedList){
@@ -140,7 +142,7 @@ public class InitRouteService {
             balancedRouteList.forEach(r->{
                 //记录到本地缓存中
                 RouteCache.put(r.getId(), r);
-                //添加新的路由对象
+                //添加新的负载均衡路由对象
                 routeDefinitions.add(loadRouteService.loadRouteDefinition(r));
             });
         }catch(Exception e){

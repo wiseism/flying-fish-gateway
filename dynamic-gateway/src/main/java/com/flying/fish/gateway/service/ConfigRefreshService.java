@@ -52,6 +52,8 @@ public class ConfigRefreshService {
     @Resource
     private ClientService clientService;
     @Resource
+    private DynamicGroovyService dynamicGroovyService;
+    @Resource
     private ApplicationEventPublisherFactory applicationEventPublisherFactory;
 
     /**
@@ -78,12 +80,14 @@ public class ConfigRefreshService {
         Long regServerId = gatewayNacosConfig.getRegServerId();
         String clientId = gatewayNacosConfig.getClientId();
         String ip = gatewayNacosConfig.getIp();
+        Long groovyScriptId = gatewayNacosConfig.getGroovyScriptId();
         //刷新配置项
         refreshBalanced(balancedId);
         refreshRoute(routeId);
         refreshRegServer(regServerId);
         refreshClient(clientId);
         refreshIp(ip);
+        refreshGroovyScript(groovyScriptId);
     }
 
     /**
@@ -96,6 +100,7 @@ public class ConfigRefreshService {
         }
         Balanced balanced = balancedService.findById(balancedId);
         if (balanced == null){
+            dynamicRouteService.deleteBalanced(balancedId);
             log.info("未获取网关负载均衡数据库配置！balancedId={}" , balancedId);
             return;
         }
@@ -104,25 +109,32 @@ public class ConfigRefreshService {
         boolean isClose = Constants.NO.equals(balanced.getStatus());
         Route route;
         String balancedRouteId;
+        //不管任何操作先发布清除事件，清除分组权重配置
+        publisherWeightRemoveEvent(balancedId);
+        //重新加载每个负载均衡网关路由
         for (LoadServer loadServer : loadServerList){
+            //获取route，改变参数，构造一个负载均衡routeId
+            balancedRouteId = loadServerService.setBalancedRouteId(balancedId, loadServer.getRouteId());
+            //如果当负载均衡网关已禁用，则删除该负载均衡下所有网关路由
             if (isClose){
-                //获取route，改变参数，构造一个负载均衡routeId
-                balancedRouteId = loadServerService.setBalancedRouteId(balancedId, loadServer.getRouteId());
                 dynamicRouteService.delete(balancedRouteId);
-            }else {
-                route = routeService.findById(loadServer.getRouteId());
-                // 状态，0是启用，1是禁用
-                if (route == null || Constants.NO.equals(route.getStatus())) {
-                    continue;
-                }
-                loadServerService.setBalancedRoute(balanced, loadServer, route);
-                dynamicRouteService.update(loadRouteService.loadRouteDefinition(route));
+                continue;
             }
+            //如果路由权重为0，则表示无流量调用，则清除负载路由
+            if (loadServer.getWeight() <= 0){
+                dynamicRouteService.delete(balancedRouteId);
+                continue;
+            }
+            route = routeService.findById(loadServer.getRouteId());
+            // 状态，0是启用，1是禁用
+            if (route == null || Constants.NO.equals(route.getStatus())) {
+                continue;
+            }
+            loadServerService.setBalancedRoute(balanced, loadServer, route);
+            dynamicRouteService.update(loadRouteService.loadRouteDefinition(route));
         }
         if (isClose){
             log.info("成功移除网关负载均衡配置缓存路由！balancedId={}", balancedId);
-            //发布事件，清除分组权重配置
-            publisherWeightRemoveEvent(balancedId);
         }else {
             log.info("成功加载网关负载均衡配置路由缓存！balancedId={}", balancedId);
         }
@@ -200,7 +212,7 @@ public class ConfigRefreshService {
             // 重新计算负载均衡下的权重
             for (String balancedId : balancedList) {
                 //发布事件，清除分组权重配置
-                publisherWeightRemoveEvent(balancedId);
+                //publisherWeightRemoveEvent(balancedId);
                 //重新加载负载均衡网关路由配置，会对权重重新进行计算（已在gateway中存在的负载均衡路由，理论上在数据库里的状态是启用）
                 refreshBalanced(balancedId);
             }
@@ -294,6 +306,18 @@ public class ConfigRefreshService {
             IpListCache.put(secureIp.getIp(), true);
             log.info("成功加载网关路由IP名单中缓存配置！ip={}", ip);
         }
+    }
+
+    /**
+     * 重新设置route网关缓存groovyScript规则引擎动态脚本
+     * @param groovyScriptId
+     */
+    public void refreshGroovyScript(Long groovyScriptId){
+        if (groovyScriptId == null || groovyScriptId <= 0){
+            return ;
+        }
+        dynamicGroovyService.refresh(groovyScriptId);
+        log.info("成功刷新网关路由groovyScript规则引擎动态脚本缓存配置！groovyScriptId={}", groovyScriptId);
     }
 
     /**

@@ -193,7 +193,7 @@ public class CountService {
         List<String> dates = new ArrayList<>(dateList.size());
         String countTag = (String)infos[1];
         String balancedId = countReq.getBalancedId().replaceAll("-","");
-        Map<String,List<Integer>> countMap = new HashMap<>(routeIds.size());
+        Map<String,List<Integer>> countMap = new LinkedHashMap<>(routeIds.size());
         for (String date : dateList){
             for (String routeId : routeIds){
                 String key = countTag + date;

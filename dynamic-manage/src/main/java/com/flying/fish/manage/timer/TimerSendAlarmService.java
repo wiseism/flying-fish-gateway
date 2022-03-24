@@ -147,7 +147,7 @@ public class TimerSendAlarmService {
                 maxAlarmTime = 30 * 60 * 1000;
                 break;
             case "1h":
-                maxAlarmTime = 1 * 60 * 60 * 1000;
+                maxAlarmTime = 60 * 60 * 1000;
                 break;
             case "5h":
                 maxAlarmTime = 5 * 60 * 60 * 1000;

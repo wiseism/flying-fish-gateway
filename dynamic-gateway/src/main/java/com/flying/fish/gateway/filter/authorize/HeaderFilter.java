@@ -21,12 +21,12 @@ public class HeaderFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行header过滤 ", route.getId());
         //header,ip,parameter,time,cookie
         if (route.getFilterAuthorizeName().contains("header")){
+            log.info("处理网关路由请求{},执行header过滤 ", route.getId());
             String accessHeader = route.getAccessHeader();
             Assert.isTrue(StringUtils.isNotBlank(accessHeader),"自定义header不能为空");
-            Assert.isTrue(accessHeader.indexOf(":") != -1,"自定义header格式错误");
+            Assert.isTrue(accessHeader.contains(":"),"自定义header格式错误");
             String[] datas = accessHeader.split(":");
             Assert.notNull(datas[0],"自定义 header 名称不能为空");
             Assert.isTrue(datas.length>1,"自定义 header 格式错误");

@@ -1,6 +1,7 @@
 package com.flying.fish.gateway.service;
 
 import com.flying.fish.gateway.event.ApplicationEventPublisherFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
@@ -19,6 +20,7 @@ import java.util.List;
  * @Date 2020/05/11
  * @Version V1.0
  */
+@Slf4j
 @Service
 public class DynamicRouteService {
 
@@ -78,6 +80,25 @@ public class DynamicRouteService {
         }catch(Exception e){
             throw new IllegalArgumentException("删除网关路由"+ id +"失败:" + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 删除路由
+     * @param balancedId
+     * @return
+     */
+    public void deleteBalanced(String balancedId) {
+        this.getRouteDefinitions().collectList().doOnNext(routeDefinitions -> {
+            routeDefinitions.stream()
+                    .filter(r -> r.getId().contains(balancedId))
+                    .forEach(r->{
+                        try {
+                            delete(r.getId());
+                        } catch (Exception e) {
+                            log.error("删除网关路由" + balancedId + "失败:" + e.getMessage(),  e);
+                        }
+                    });
+        }).subscribe();
     }
 
     /**

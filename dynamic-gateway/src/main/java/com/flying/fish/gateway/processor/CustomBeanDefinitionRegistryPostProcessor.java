@@ -1,5 +1,6 @@
-package com.flying.fish.gateway.filter;
+package com.flying.fish.gateway.processor;
 
+import com.flying.fish.gateway.filter.CustomWeightCalculatorWebFilter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

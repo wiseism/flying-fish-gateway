@@ -7,7 +7,6 @@ import com.flying.fish.formwork.service.ClientService;
 import com.flying.fish.formwork.service.CustomNacosConfigService;
 import com.flying.fish.formwork.util.ApiResult;
 import com.flying.fish.formwork.util.Constants;
-import com.flying.fish.formwork.util.RouteConstants;
 import com.flying.fish.formwork.util.UUIDUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -55,8 +54,7 @@ public class ClientRest extends BaseRest {
         Assert.isTrue(count <= 0, "客户端名称已存在，不能重复");
         //保存
         clientService.save(client);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(client.getId(), client.getIp());
+        customNacosConfigService.publishClientNacosConfig(client.getId());
         return new ApiResult();
     }
 
@@ -71,8 +69,7 @@ public class ClientRest extends BaseRest {
         Client dbClient = clientService.findById(id);
         Assert.notNull(dbClient, "未获取到对象");
         clientService.delete(dbClient);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(id, dbClient.getIp());
+        customNacosConfigService.publishClientNacosConfig(id);
         return new ApiResult();
     }
 
@@ -88,8 +85,7 @@ public class ClientRest extends BaseRest {
         client.setUpdateTime(new Date());
         this.validate(client);
         clientService.update(client);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(client.getId(), client.getIp());
+        customNacosConfigService.publishClientNacosConfig(client.getId());
         return new ApiResult();
     }
 
@@ -147,8 +143,7 @@ public class ClientRest extends BaseRest {
         Client dbClient = clientService.findById(id);
         dbClient.setStatus(Constants.YES);
         clientService.update(dbClient);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(id, dbClient.getIp());
+        customNacosConfigService.publishClientNacosConfig(id);
         return new ApiResult();
     }
 
@@ -163,16 +158,8 @@ public class ClientRest extends BaseRest {
         Client dbClient = clientService.findById(id);
         dbClient.setStatus(Constants.NO);
         clientService.update(dbClient);
-        //this.setClientCacheVersion();
-        customNacosConfigService.publishClientNacosConfig(id, dbClient.getIp());
+        customNacosConfigService.publishClientNacosConfig(id);
         return new ApiResult();
     }
 
-    /**
-     * 对客户端数据进行变更后，设置redis中缓存的版本号
-     */
-    @Deprecated
-    private void setClientCacheVersion(){
-        redisTemplate.opsForHash().put(RouteConstants.SYNC_VERSION_KEY, RouteConstants.CLIENT_ID, String.valueOf(System.currentTimeMillis()));
-    }
 }

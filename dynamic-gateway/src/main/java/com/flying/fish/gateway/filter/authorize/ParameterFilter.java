@@ -23,14 +23,14 @@ public class ParameterFilter extends FilterHandler {
 
     @Override
     public void handleRequest(ServerHttpRequest request){
-        log.info("处理网关路由请求{},执行parameter过滤 ", route.getId());
         //header,ip,parameter,time,cookie
         if (route.getFilterAuthorizeName().contains("parameter")){
+            log.info("处理网关路由请求{},执行parameter过滤 ", route.getId());
             String accessParameter = route.getAccessParameter();
             Assert.isTrue(StringUtils.isNotBlank(accessParameter),"自定义参数不能为空");
-            Assert.isTrue(accessParameter.indexOf("=") != -1,"自定义参数格式错误");
+            Assert.isTrue(accessParameter.contains("="),"自定义参数格式错误");
             List<String[]> dataList =  new ArrayList<>();
-            if (accessParameter.indexOf("&") != -1){
+            if (accessParameter.contains("&")){
                 String [] parameters = accessParameter.split("&");
                 for (String parameter : parameters){
                     dataList.add(splitData(parameter));
