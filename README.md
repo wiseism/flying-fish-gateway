@@ -56,7 +56,7 @@
 
 1.  依赖spring-boot 2.3.9.RELEASE、spring-cloud Hoxton.SR10 版本，注意版本的搭配
 2.  需安装eureke、consul、nacos等其中任意一种，也可无需注册中心运行
-3.  详细安装文档：**[doc/flying-fish-gateway-说明文档.docx](https://gitee.com/omsgit/flying-fish-gateway/tree/snapshot.v.3.2/doc)** 
+3.  详细安装文档：**[doc/flying-fish-gateway-说明文档.docx](https://gitee.com/omsgit/flying-fish-gateway/tree/snapshot-nacos.v.3.2/doc)** 
 
 #### 使用说明
 
