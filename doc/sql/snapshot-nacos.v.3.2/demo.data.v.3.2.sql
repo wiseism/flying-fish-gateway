@@ -33,7 +33,7 @@ insert  into `loadserver`(`id`,`routeId`,`balancedId`,`weight`,`createTime`,`upd
 
 /*Data for the table `monitor` */
 
-insert  into `monitor`(`id`,`status`,`emails`,`topic`,`recover`,`frequency`,`alarmTime`,`sendTime`,`updateTime`) values ('userCenter-getToken','2','jianglong@4366.com','网关服务发生告警，请及时处理','0','30m','2022-03-24 10:50:03','2022-03-24 10:46:01','2021-09-27 14:57:38'),('userCenter-getUser','1','jianglong@4366.com','监控告警','1','12h','2021-05-12 19:45:38','2021-05-12 19:45:04','2021-09-30 15:13:42'),('userCenter-regUser','0','','','0','1h',NULL,NULL,'2021-09-26 20:18:01');
+insert  into `monitor`(`id`,`status`,`emails`,`topic`,`recover`,`frequency`,`alarmTime`,`sendTime`,`updateTime`) values ('userCenter-getToken','2','xxx@163.com','网关服务发生告警，请及时处理','0','30m','2022-03-24 10:50:03','2022-03-24 10:46:01','2021-09-27 14:57:38'),('userCenter-getUser','1','xxxx@163.com','监控告警','1','12h','2021-05-12 19:45:38','2021-05-12 19:45:04','2021-09-30 15:13:42'),('userCenter-regUser','0','','','0','1h',NULL,NULL,'2021-09-26 20:18:01');
 
 /*Data for the table `regserver` */
 
